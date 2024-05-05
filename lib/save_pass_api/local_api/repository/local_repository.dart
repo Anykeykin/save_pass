@@ -1,7 +1,9 @@
+import 'package:save_pass/save_pass_api/models/pass_model.dart';
+
 abstract class LocalRepository {
-  void savePass();
-  readPass();
-  getAllPass();
-  editPass();
-  deletePass();
+  bool savePass();
+  PassModel readPass();
+  List<PassModel> getAllPass();
+  bool editPass();
+  bool deletePass();
 }
