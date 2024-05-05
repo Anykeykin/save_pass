@@ -1,16 +1,15 @@
+import 'package:save_pass/save_pass_api/local_api/datasource/sql_local_service.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 
 class LocalRepositoryImpl implements LocalRepository {
   @override
-  deletePass() {
-    // TODO: implement deletePass
-    throw UnimplementedError();
+  bool deletePass() {
+   return SqlLocalService.deletePass();
   }
 
   @override
-  editPass() {
-    // TODO: implement editPass
-    throw UnimplementedError();
+  bool editPass() {
+    return SqlLocalService.editPass();
   }
 
   @override
@@ -26,7 +25,7 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  void savePass() {
+  bool savePass() {
     // TODO: implement savePass
   }
 }
