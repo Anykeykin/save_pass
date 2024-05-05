@@ -1,11 +1,12 @@
 import 'package:save_pass/save_pass_api/local_api/datasource/sql_local_service.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LocalRepositoryImpl implements LocalRepository {
   @override
-  bool deletePass() {
-    return SqlLocalService.deletePass();
+  Future<bool> deletePass(Future<Database> database, int passwordId) async {
+    return await SqlLocalService.deletePass(database,passwordId);
   }
 
   @override
