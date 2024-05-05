@@ -6,4 +6,5 @@ abstract class LocalRepository {
   List<PassModel> getAllPass();
   bool editPass();
   bool deletePass();
+  openSqlDatabase();
 }
