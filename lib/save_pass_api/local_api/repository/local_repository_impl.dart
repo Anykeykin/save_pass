@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 class LocalRepositoryImpl implements LocalRepository {
   @override
   Future<bool> deletePass(Future<Database> database, int passwordId) async {
-    return await SqlLocalService.deletePass(database,passwordId);
+    return await SqlLocalService.deletePass(database, passwordId);
   }
 
   @override
@@ -15,13 +15,8 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  List<PassModel> getAllPass() {
-    return SqlLocalService.getAllPass();
-  }
-
-  @override
-  PassModel readPass() {
-    return SqlLocalService.readPass();
+  Future<List<PassModel>> getAllPass(Future<Database> database) async {
+    return await SqlLocalService.getAllPass(database);
   }
 
   @override

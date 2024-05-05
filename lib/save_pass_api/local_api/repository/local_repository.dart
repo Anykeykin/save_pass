@@ -3,8 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 abstract class LocalRepository {
   bool savePass(PassModel passModel);
-  PassModel readPass();
-  List<PassModel> getAllPass();
+  Future<List<PassModel>> getAllPass(Future<Database> database);
   Future<bool> editPass(Future<Database> database, PassModel passModel);
   Future<bool> deletePass(Future<Database> database, int passwordId);
   openSqlDatabase();
