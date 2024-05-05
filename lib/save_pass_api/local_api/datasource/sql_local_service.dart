@@ -19,8 +19,17 @@ class SqlLocalService {
         0;
   }
 
-  static bool editPass() {
-    return true;
+  static Future<bool> editPass(
+      Future<Database> database, PassModel passModel) async {
+    final db = await database;
+
+    return await db.update(
+          'pass',
+          passModel.toMap(),
+          where: 'id = ?',
+          whereArgs: [passModel.passwordId],
+        ) !=
+        0;
   }
 
   static bool savePass(PassModel passModel) {
