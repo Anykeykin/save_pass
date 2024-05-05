@@ -1,7 +1,7 @@
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
-import 'package:supabase/src/supabase_client.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RemoteRepositoryImpl implements RemoteRepository {
   @override
@@ -21,6 +21,6 @@ class RemoteRepositoryImpl implements RemoteRepository {
 
   @override
   Future<bool> savePass(SupabaseClient supabase, PassModel passModel) async {
-    return await SupabaseAppService.savePass(supabase,passModel);
+    return await SupabaseAppService.savePass(supabase, passModel);
   }
 }
