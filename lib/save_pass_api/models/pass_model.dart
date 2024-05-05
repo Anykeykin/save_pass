@@ -15,4 +15,12 @@ class PassModel {
       'password_id': passwordId
     };
   }
+
+  static PassModel fromMap(Map<String, dynamic> map) {
+    return PassModel(
+      passwordName: map['password_name'],
+      password: map['password'],
+      passwordId: map['password_id'],
+    );
+  }
 }
