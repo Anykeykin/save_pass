@@ -7,8 +7,16 @@ import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
 class SqlLocalService {
-  static bool deletePass() {
-    return true;
+  static Future<bool> deletePass(
+      Future<Database> database, int passwordId) async {
+    final db = await database;
+
+    return await db.delete(
+          'pass',
+          where: 'id = ?',
+          whereArgs: [passwordId],
+        ) !=
+        0;
   }
 
   static bool editPass() {
