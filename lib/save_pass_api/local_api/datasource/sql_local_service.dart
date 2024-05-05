@@ -36,8 +36,14 @@ class SqlLocalService {
     return true;
   }
 
-  static List<PassModel> getAllPass() {
-    return [];
+  static Future<List<PassModel>> getAllPass(Future<Database> database) async {
+    final db = await database;
+
+    final List<Map<String, Object?>> passMaps = await db.query('pass');
+
+    return [
+      for (final passMap in passMaps) PassModel.fromMap(passMap),
+    ];
   }
 
   static PassModel readPass() {
