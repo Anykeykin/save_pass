@@ -5,7 +5,7 @@ abstract class LocalRepository {
   bool savePass(PassModel passModel);
   PassModel readPass();
   List<PassModel> getAllPass();
-  bool editPass();
+  Future<bool> editPass(Future<Database> database, PassModel passModel);
   Future<bool> deletePass(Future<Database> database, int passwordId);
   openSqlDatabase();
 }

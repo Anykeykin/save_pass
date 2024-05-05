@@ -10,8 +10,8 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  bool editPass() {
-    return SqlLocalService.editPass();
+  Future<bool> editPass(Future<Database> database, PassModel passModel) async {
+    return await SqlLocalService.editPass(database, passModel);
   }
 
   @override
