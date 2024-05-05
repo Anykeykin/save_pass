@@ -24,7 +24,7 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  bool savePass() {
-    return SqlLocalService.savePass();
+  bool savePass(PassModel passModel) {
+    return SqlLocalService.savePass(passModel);
   }
 }
