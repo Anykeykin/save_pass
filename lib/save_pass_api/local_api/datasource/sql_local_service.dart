@@ -32,8 +32,16 @@ class SqlLocalService {
         0;
   }
 
-  static bool savePass(PassModel passModel) {
-    return true;
+  static Future<bool> savePass(
+      Future<Database> database, PassModel passModel) async {
+    final db = await database;
+
+    return await db.insert(
+          'pass',
+          passModel.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        ) !=
+        0;
   }
 
   static Future<List<PassModel>> getAllPass(Future<Database> database) async {
@@ -44,11 +52,6 @@ class SqlLocalService {
     return [
       for (final passMap in passMaps) PassModel.fromMap(passMap),
     ];
-  }
-
-  static PassModel readPass() {
-    return PassModel(
-        passwordName: 'passwordName', password: 'password', passwordId: 0);
   }
 
   static openSqlDatabase() async {

@@ -20,8 +20,8 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  bool savePass(PassModel passModel) {
-    return SqlLocalService.savePass(passModel);
+  Future<bool> savePass(Future<Database> database, PassModel passModel)async {
+    return await SqlLocalService.savePass(database,passModel);
   }
 
   @override
