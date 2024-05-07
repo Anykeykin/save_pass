@@ -1,4 +1,4 @@
-import 'package:save_pass/save_pass_api/remote_api/repository_impl/user_repository.dart';
+import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
   @override
