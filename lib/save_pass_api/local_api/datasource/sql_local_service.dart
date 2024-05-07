@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:save_pass/save_pass_api/models/app_user.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:sqflite/sqflite.dart';
 // ignore: depend_on_referenced_packages
@@ -66,5 +67,48 @@ class SqlLocalService {
       version: 1,
     );
     return database;
+  }
+
+  static openAuthSqlDatabase() async {
+    final Directory libDir = await getLibraryDirectory();
+    final database = openDatabase(
+      join(libDir.path, 'auth.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE auth(uid INTEGER PRIMARY KEY, email TEXT, password TEXT)',
+        );
+      },
+      version: 1,
+    );
+    return database;
+  }
+
+  static Future<bool> saveAuthData(AppUser appUser, Database database) async {
+    final db = database;
+
+    return await db.insert(
+          'auth',
+          appUser.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        ) !=
+        0;
+  }
+
+  static Future<AppUser> loadAuthData(Database database) async {
+    final db = database;
+    final List<Map<String, Object?>> authMaps = await db.query('auth');
+    // TODO: Прочекать и исправить это недоразумение
+    return AppUser.fromMap(authMaps.first);
+  }
+
+  static Future<bool> removeAuthData(AppUser appUser, Database database) async {
+    final db = database;
+
+    return await db.delete(
+          'auth',
+          where: 'id = ?',
+          whereArgs: [appUser.uid],
+        ) !=
+        0;
   }
 }
