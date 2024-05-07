@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:flutter/material.dart';
-import 'package:save_pass/save_pass_api/local_api/repository/local_repository_impl.dart';
+import 'package:save_pass/save_pass_api/local_api/repository_impl/local_repository_impl.dart';
 import 'package:save_pass/save_pass_api/remote_api/datasource/initialize.dart';
 import 'package:save_pass/save_pass_ui/first_screen.dart';
 import 'package:sqflite/sqflite.dart';
