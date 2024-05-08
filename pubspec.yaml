@@ -38,7 +38,9 @@ dependencies:
   supabase_flutter: ^2.5.2
   sqflite: ^2.3.2
   path_provider:
-
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.5
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
