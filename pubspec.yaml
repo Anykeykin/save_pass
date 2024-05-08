@@ -16,7 +16,8 @@ dependencies:
   path_provider:
   bloc: ^8.1.4
   flutter_bloc: ^8.1.5
-
+  equatable:
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
