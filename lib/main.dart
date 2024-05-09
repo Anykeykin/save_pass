@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:save_pass/save_pass_api/local_api/repository_impl/local_repository_impl.dart';
 import 'package:save_pass/save_pass_api/remote_api/datasource/initialize.dart';
+import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository_impl/user_repository_impl.dart';
 import 'package:save_pass/save_pass_ui/first_screen.dart';
@@ -13,8 +14,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Database db = await LocalRepositoryImpl().openSqlDatabase();
   initialize();
-  UserRepositoryImpl.supabase = Supabase.instance.client;
+  SupabaseAppService.supabase = Supabase.instance.client;
   UserRepository userRepository = UserRepositoryImpl();
-  
+
   runApp(const MyApp());
 }
