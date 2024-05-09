@@ -1,26 +1,25 @@
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RemoteRepositoryImpl implements RemoteRepository {
   @override
-  Future<bool> deletePass(SupabaseClient supabase, int passwordId) async {
-    return await SupabaseAppService.deletePass(supabase, passwordId);
+  Future<bool> deletePass(int passwordId) async {
+    return await SupabaseAppService.deletePass(passwordId);
   }
 
   @override
-  Future<bool> editPass(SupabaseClient supabase, PassModel passModel) async {
-    return await SupabaseAppService.editPass(supabase, passModel);
+  Future<bool> editPass(PassModel passModel) async {
+    return await SupabaseAppService.editPass(passModel);
   }
 
   @override
-  Future<List<PassModel>> getAllPass(SupabaseClient supabase) async {
-    return await SupabaseAppService.getAllPass(supabase);
+  Future<List<PassModel>> getAllPass() async {
+    return await SupabaseAppService.getAllPass();
   }
 
   @override
-  Future<bool> savePass(SupabaseClient supabase, PassModel passModel) async {
-    return await SupabaseAppService.savePass(supabase, passModel);
+  Future<bool> savePass(PassModel passModel) async {
+    return await SupabaseAppService.savePass(passModel);
   }
 }
