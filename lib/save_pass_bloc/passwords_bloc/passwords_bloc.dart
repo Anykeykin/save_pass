@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,11 +18,21 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     on<GetAllPass>(_getAllPass);
   }
 
-  FutureOr<void> _savePass(
-      SavePass event, Emitter<PasswordsState> emit) async {}
+  FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
+    int passwordId = Random().nextInt(100);
+    final PassModel newPass = PassModel(
+        passwordName: event.passwordName,
+        password: event.password,
+        passwordId: passwordId);
+    await remoteRepository.savePass(newPass);
+  }
 
-  FutureOr<void> _editPass(
-      EditPass event, Emitter<PasswordsState> emit) async {}
+  FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
+    final PassModel editedPass = state.passModel
+        .firstWhere((element) => element.passwordId == event.passwordId);
+    editedPass.password = event.password;
+    await remoteRepository.editPass(editedPass);
+  }
 
   FutureOr<void> _deletePass(
       DeletePass event, Emitter<PasswordsState> emit) async {
