@@ -1,17 +1,11 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
-
 abstract class UserRepository {
-  Future<User?> login(
-    SupabaseClient supabase,
+  Future<dynamic> login(
     String email,
     String password,
   );
-  Future<User?> register(
-    SupabaseClient supabase,
+  Future<dynamic> register(
     String email,
     String password,
   );
-  Future<void> logout(
-    SupabaseClient supabase,
-  );
+  Future<void> logout();
 }
