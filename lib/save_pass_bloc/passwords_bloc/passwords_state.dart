@@ -13,10 +13,10 @@ class PasswordsState extends Equatable {
     this.passModel = const [],
   });
 
-  PasswordsState copyWith(
+  PasswordsState copyWith({
     LoadStatus? loadStatus,
     List<PassModel>? passModel,
-  ) {
+  }) {
     return PasswordsState(
       passModel: passModel ?? this.passModel,
       loadStatus: loadStatus ?? this.loadStatus,
