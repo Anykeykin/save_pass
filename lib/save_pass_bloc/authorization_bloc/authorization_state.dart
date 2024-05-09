@@ -1,6 +1,6 @@
 part of 'authorization_bloc.dart';
 
-enum AuthorizationStatus { access, denied }
+enum AuthorizationStatus { access, denied, error }
 
 class AuthorizationState extends Equatable {
   final AuthorizationStatus registrationStatus;
