@@ -2,9 +2,10 @@ import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.da
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserRepositoryImpl implements UserRepository {
+  static late SupabaseClient supabase;
+
   @override
   Future<User?> login(
-    SupabaseClient supabase,
     String email,
     String password,
   ) async {
@@ -17,7 +18,6 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User?> register(
-    SupabaseClient supabase,
     String email,
     String password,
   ) async {
@@ -29,9 +29,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> logout(
-    SupabaseClient supabase,
-  ) async {
+  Future<void> logout() async {
     await supabase.auth.signOut();
   }
 }
