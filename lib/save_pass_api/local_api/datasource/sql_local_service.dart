@@ -8,9 +8,8 @@ import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
 class SqlLocalService {
-  static Future<bool> deletePass(
-      Future<Database> database, int passwordId) async {
-    final db = await database;
+  static Future<bool> deletePass(int passwordId) async {
+    final db = await openSqlDatabase();
 
     return await db.delete(
           'pass',
@@ -20,9 +19,8 @@ class SqlLocalService {
         0;
   }
 
-  static Future<bool> editPass(
-      Future<Database> database, PassModel passModel) async {
-    final db = await database;
+  static Future<bool> editPass(PassModel passModel) async {
+    final db = await openSqlDatabase();
 
     return await db.update(
           'pass',
@@ -33,9 +31,8 @@ class SqlLocalService {
         0;
   }
 
-  static Future<bool> savePass(
-      Future<Database> database, PassModel passModel) async {
-    final db = await database;
+  static Future<bool> savePass(PassModel passModel) async {
+    final db = await openSqlDatabase();
 
     return await db.insert(
           'pass',
@@ -45,8 +42,8 @@ class SqlLocalService {
         0;
   }
 
-  static Future<List<PassModel>> getAllPass(Future<Database> database) async {
-    final db = await database;
+  static Future<List<PassModel>> getAllPass() async {
+    final db = await openSqlDatabase();
 
     final List<Map<String, Object?>> passMaps = await db.query('pass');
 
@@ -83,8 +80,8 @@ class SqlLocalService {
     return database;
   }
 
-  static Future<bool> saveAuthData(AppUser appUser, Database database) async {
-    final db = database;
+  static Future<bool> saveAuthData(AppUser appUser) async {
+    final db = await openAuthSqlDatabase();
 
     return await db.insert(
           'auth',
@@ -94,15 +91,15 @@ class SqlLocalService {
         0;
   }
 
-  static Future<AppUser> loadAuthData(Database database) async {
-    final db = database;
+  static Future<AppUser> loadAuthData() async {
+    final db = await openAuthSqlDatabase();
     final List<Map<String, Object?>> authMaps = await db.query('auth');
     // TODO: Прочекать и исправить это недоразумение
     return AppUser.fromMap(authMaps.first);
   }
 
-  static Future<bool> removeAuthData(AppUser appUser, Database database) async {
-    final db = database;
+  static Future<bool> removeAuthData(AppUser appUser) async {
+    final db = await openAuthSqlDatabase();
 
     return await db.delete(
           'auth',
