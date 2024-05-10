@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
 
@@ -11,7 +12,11 @@ part 'passwords_state.dart';
 
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   final RemoteRepository remoteRepository;
-  PasswordsBloc(this.remoteRepository) : super(const PasswordsState()) {
+  final LocalRepository localRepository;
+  PasswordsBloc(
+    this.remoteRepository,
+    this.localRepository,
+  ) : super(const PasswordsState()) {
     on<SavePass>(_savePass);
     on<EditPass>(_editPass);
     on<DeletePass>(_deletePass);
@@ -24,6 +29,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         passwordName: event.passwordName,
         password: event.password,
         passwordId: passwordId);
+    await localRepository.savePass(newPass);
     await remoteRepository.savePass(newPass);
   }
 
@@ -31,11 +37,13 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     final PassModel editedPass = state.passModel
         .firstWhere((element) => element.passwordId == event.passwordId);
     editedPass.password = event.password;
+    await localRepository.savePass(editedPass);
     await remoteRepository.editPass(editedPass);
   }
 
   FutureOr<void> _deletePass(
       DeletePass event, Emitter<PasswordsState> emit) async {
+    await localRepository.deletePass(event.passwordId);
     await remoteRepository.deletePass(event.passwordId);
   }
 
