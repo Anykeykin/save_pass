@@ -50,7 +50,10 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _getAllPass(
       GetAllPass event, Emitter<PasswordsState> emit) async {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
-    final List<PassModel> passModel = await remoteRepository.getAllPass();
+    List<PassModel> passModel = await localRepository.getAllPass();
+    emit(state.copyWith(passModel: passModel));
+    final List<PassModel> onlinePassModel = await remoteRepository.getAllPass();
+    passModel.addAll(onlinePassModel);
     emit(state.copyWith(loadStatus: LoadStatus.success, passModel: passModel));
   }
 }
