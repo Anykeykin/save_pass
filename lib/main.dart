@@ -11,7 +11,7 @@ import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.
 import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository_impl/remote_repository_impl.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository_impl/user_repository_impl.dart';
-import 'package:save_pass/save_pass_ui/first_screen.dart';
+import 'package:save_pass/save_pass_ui/pass_list_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
