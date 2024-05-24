@@ -31,6 +31,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         passwordId: passwordId);
     await localRepository.savePass(newPass);
     await remoteRepository.savePass(newPass);
+    add(const GetAllPass());
   }
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
@@ -39,12 +40,14 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     editedPass.password = event.password;
     await localRepository.savePass(editedPass);
     await remoteRepository.editPass(editedPass);
+    add(const GetAllPass());
   }
 
   FutureOr<void> _deletePass(
       DeletePass event, Emitter<PasswordsState> emit) async {
     await localRepository.deletePass(event.passwordId);
     await remoteRepository.deletePass(event.passwordId);
+    add(const GetAllPass());
   }
 
   FutureOr<void> _getAllPass(
