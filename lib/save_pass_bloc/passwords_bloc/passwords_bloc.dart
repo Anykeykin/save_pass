@@ -26,9 +26,10 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
     final PassModel newPass = PassModel(
-        passwordName: event.passwordName,
-        password: event.password,
-        passwordId: passwordId);
+      passwordName: event.passwordName,
+      password: event.password,
+      passwordId: passwordId,
+    );
     await localRepository.savePass(newPass);
     await remoteRepository.savePass(newPass);
     add(const GetAllPass());
