@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
+import 'package:save_pass/save_pass_ui/router.dart';
 
 class RegistrationSaveScreen extends StatelessWidget {
   RegistrationSaveScreen({super.key});
@@ -15,12 +16,14 @@ class RegistrationSaveScreen extends StatelessWidget {
     return BlocBuilder<AuthorizationBloc, AuthorizationState>(
       builder: (registrationContext, state) {
         if (state.registrationStatus == AuthorizationStatus.access) {
-          // Future.delayed(Duration.zero, () {
-          //   Navigator.of(context).pushNamed(
-          //     // ScreenPaths.navBarScreen,
-          //     // arguments: {},
-          //   );
-          // });
+          Future.delayed(Duration.zero, () {
+            Navigator.of(context).pushNamed(
+              ScreenPaths.loginScreen,
+              arguments: {
+                'auth_bloc': context.read<AuthorizationBloc>(),
+              },
+            );
+          });
         }
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 33, 33, 32),
@@ -179,10 +182,13 @@ class RegistrationSaveScreen extends StatelessWidget {
                             ),
                             InkWell(
                               onTap: () {
-                                // Navigator.of(context).pushNamed(
-                                //   ScreenPaths.loginScreen,
-                                //   arguments: {},
-                                // );
+                                Navigator.of(context).pushNamed(
+                                  ScreenPaths.loginScreen,
+                                  arguments: {
+                                    'auth_bloc':
+                                        context.read<AuthorizationBloc>(),
+                                  },
+                                );
                               },
                               child: const Text(
                                 'Войти',
