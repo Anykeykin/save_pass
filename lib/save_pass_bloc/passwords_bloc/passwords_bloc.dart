@@ -18,6 +18,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     this.localRepository,
   ) : super(const PasswordsState()) {
     on<SavePass>(_savePass);
+    on<InitEditPass>(_initEditPass);
     on<EditPass>(_editPass);
     on<DeletePass>(_deletePass);
     on<GetAllPass>(_getAllPass);
@@ -37,7 +38,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
     final PassModel editedPass = state.passModel
-        .firstWhere((element) => element.passwordId == event.passwordId);
+        .firstWhere((element) => element.passwordId == state.passwordId);
     editedPass.password = event.password;
     await localRepository.savePass(editedPass);
     // await remoteRepository.editPass(editedPass);
@@ -58,6 +59,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     // emit(state.copyWith(passModel: passModel));
     // final List<PassModel> onlinePassModel = await remoteRepository.getAllPass();
     // passModel.addAll(onlinePassModel);
-    emit(state.copyWith(loadStatus: LoadStatus.success, passModel: passModel));
+    emit(state.copyWith(
+      loadStatus: LoadStatus.success,
+      passModel: passModel,
+      passwordId: 0,
+    ));
+  }
+
+  FutureOr<void> _initEditPass(
+      InitEditPass event, Emitter<PasswordsState> emit) {
+    emit(state.copyWith(passwordId: event.passwordId));
   }
 }
