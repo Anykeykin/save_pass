@@ -1,27 +1,5 @@
 import 'package:flutter/material.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SavePass',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF2C2C2C),
-        brightness: Brightness.dark,
-        primaryColor: Colors.teal,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: TextTheme(
-          headlineLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-          bodyLarge: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
-        ),
-      ),
-      home: PasswordListScreen(),
-    );
-  }
-}
-
 class PasswordListScreen extends StatelessWidget {
   final List<Map<String, String>> passwords = [
     {'site': 'Google', 'password': 'google-password'},
@@ -86,6 +64,7 @@ class PasswordCard extends StatefulWidget {
 
 class _PasswordCardState extends State<PasswordCard> {
   bool _obscureText = true;
+  bool _isPressed = false;
 
   void _toggleVisibility() {
     setState(() {
@@ -93,73 +72,50 @@ class _PasswordCardState extends State<PasswordCard> {
     });
   }
 
+  void _onTapDown() {
+    setState(() {
+      _isPressed = true;
+    });
+  }
+
+  void _onTapUp() {
+    setState(() {
+      _isPressed = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0),
-      decoration: BoxDecoration(
-        color: Color(0xFF2C2C2C),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.6),
-            offset: Offset(5, 5),
-            blurRadius: 15,
-            spreadRadius: 1,
-          ),
-          BoxShadow(
-            color: Colors.grey.shade800,
-            offset: Offset(-5, -5),
-            blurRadius: 15,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-        leading: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFF2C2C2C),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.6),
-                offset: Offset(2, 2),
-                blurRadius: 10,
-                spreadRadius: 1,
-              ),
-              BoxShadow(
-                color: Colors.grey.shade800,
-                offset: Offset(-2, -2),
-                blurRadius: 10,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: CircleAvatar(
-            backgroundColor: Color(0xFF2C2C2C),
-            child: Text(
-              widget.site[0].toUpperCase(),
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTapDown: (_) => _onTapDown(),
+      onTapUp: (_) => _onTapUp(),
+      onTapCancel: () => _onTapUp(),
+      onTap: _toggleVisibility,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 100),
+        margin: EdgeInsets.symmetric(vertical: 10.0),
+        decoration: BoxDecoration(
+          color: _isPressed ? Color(0xFF222222) : Color(0xFF2C2C2C),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.6),
+              offset: Offset(5, 5),
+              blurRadius: 15,
+              spreadRadius: 1,
             ),
-          ),
+            BoxShadow(
+              color: Colors.grey.shade800,
+              offset: Offset(-5, -5),
+              blurRadius: 15,
+              spreadRadius: 1,
+            ),
+          ],
         ),
-        title: Text(
-          widget.site,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-            color: Colors.white,
-          ),
-        ),
-        subtitle: Text(
-          _obscureText ? '••••••••' : widget.password,
-          style: TextStyle(fontSize: 16.0, color: Colors.white70),
-        ),
-        trailing: GestureDetector(
-          onTap: _toggleVisibility,
-          child: Container(
+        child: ListTile(
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+          leading: Container(
             decoration: BoxDecoration(
               color: Color(0xFF2C2C2C),
               shape: BoxShape.circle,
@@ -178,10 +134,53 @@ class _PasswordCardState extends State<PasswordCard> {
                 ),
               ],
             ),
-            padding: EdgeInsets.all(8.0),
-            child: Icon(
-              _obscureText ? Icons.visibility_off : Icons.visibility,
+            child: CircleAvatar(
+              backgroundColor: Color(0xFF2C2C2C),
+              child: Text(
+                widget.site[0].toUpperCase(),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          title: Text(
+            widget.site,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
               color: Colors.white,
+            ),
+          ),
+          subtitle: Text(
+            _obscureText ? '••••••••' : widget.password,
+            style: TextStyle(fontSize: 16.0, color: Colors.white70),
+          ),
+          trailing: GestureDetector(
+            onTap: _toggleVisibility,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFF2C2C2C),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.6),
+                    offset: Offset(2, 2),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                  BoxShadow(
+                    color: Colors.grey.shade800,
+                    offset: Offset(-2, -2),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.all(8.0),
+              child: Icon(
+                _obscureText ? Icons.visibility_off : Icons.visibility,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
