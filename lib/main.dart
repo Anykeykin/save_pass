@@ -74,18 +74,25 @@ class MyApp extends StatelessWidget {
                   ..add(AutoLogin()),
           ),
           BlocProvider(
-            create: (context) => PasswordsBloc(remoteRepository,localRepository),
+            create: (context) =>
+                PasswordsBloc(remoteRepository, localRepository),
           ),
         ],
         child: BlocListener<AuthorizationBloc, AuthorizationState>(
           listener: (context, state) {
             if (state.registrationStatus == AuthorizationStatus.denied) {
               Navigator.of(context).pushNamed(
-                ScreenPaths.loginScreen,
+                ScreenPaths.passListScreen,
                 arguments: {
-                  'auth_bloc': context.read<AuthorizationBloc>(),
+                  'passwords_bloc': context.read<PasswordsBloc>(),
                 },
               );
+              // Navigator.of(context).pushNamed(
+              //   ScreenPaths.loginScreen,
+              //   arguments: {
+              //     'auth_bloc': context.read<AuthorizationBloc>(),
+              //   },
+              // );
             }
             if (state.registrationStatus == AuthorizationStatus.access) {
               Navigator.of(context).pushNamed(

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 
 class PasswordListScreen extends StatelessWidget {
-  final List<Map<String, String>> passwords = [
-    {'site': 'Google', 'password': 'google-password'},
-    {'site': 'Facebook', 'password': 'facebook-password'},
-    {'site': 'Twitter', 'password': 'twitter-password'},
-    {'site': 'Instagram', 'password': 'instagram-password'},
-  ];
-
-   PasswordListScreen({super.key});
+  PasswordListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +24,25 @@ class PasswordListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(10.0),
-        itemCount: passwords.length,
-        itemBuilder: (context, index) {
-          return PasswordCard(
-            site: passwords[index]['site']!,
-            password: passwords[index]['password']!,
+      body: BlocBuilder<PasswordsBloc, PasswordsState>(
+        builder: (context, state) {
+          return ListView.builder(
+            padding: const EdgeInsets.all(10.0),
+            itemCount: state.passModel.length,
+            itemBuilder: (context, index) {
+              return PasswordCard(
+                site: state.passModel[index].passwordName,
+                password: state.passModel[index].password,
+              );
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Логика добавления нового пароля
+          context.read<PasswordsBloc>().add(
+              SavePass(passwordName: 'passwordName', password: 'password'));
         },
         backgroundColor: const Color(0xFF2C2C2C),
         elevation: 8,
@@ -141,8 +142,8 @@ class _PasswordCardState extends State<PasswordCard> {
               backgroundColor: const Color(0xFF2C2C2C),
               child: Text(
                 widget.site[0].toUpperCase(),
-                style:
-                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
