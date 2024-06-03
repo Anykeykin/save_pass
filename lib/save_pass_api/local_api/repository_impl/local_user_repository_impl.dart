@@ -4,7 +4,7 @@ import 'package:save_pass/save_pass_api/models/app_user.dart';
 
 class LocalUserRepositoryImpl implements LocalUserRepository {
   @override
-  Future<AppUser> loadAuthData() async {
+  Future<AppUser?> loadAuthData() async {
     return await SqlLocalService.loadAuthData();
   }
 

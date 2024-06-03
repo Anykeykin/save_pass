@@ -91,11 +91,15 @@ class SqlLocalService {
         0;
   }
 
-  static Future<AppUser> loadAuthData() async {
+  static Future<AppUser?> loadAuthData() async {
     final db = await openAuthSqlDatabase();
-    final List<Map<String, Object?>> authMaps = await db.query('auth');
-    // TODO: Прочекать и исправить это недоразумение
-    return AppUser.fromMap(authMaps.first);
+    try {
+      final List<Map<String, Object?>> authMaps = await db.query('auth');
+      // TODO: Прочекать и исправить это недоразумение
+      return AppUser.fromMap(authMaps.first);
+    } catch (e) {
+      return null;
+    }
   }
 
   static Future<bool> removeAuthData(AppUser appUser) async {
