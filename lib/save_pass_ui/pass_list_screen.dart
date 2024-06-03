@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
+import 'package:save_pass/save_pass_ui/router.dart';
 
 class PasswordListScreen extends StatelessWidget {
-  PasswordListScreen({super.key});
+  const PasswordListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +42,12 @@ class PasswordListScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Логика добавления нового пароля
-          context.read<PasswordsBloc>().add(
-              SavePass(passwordName: 'passwordName', password: 'password'));
+          Navigator.of(context).pushNamed(
+            ScreenPaths.createPassListScreen,
+            arguments: {
+              'passwords_bloc': context.read<PasswordsBloc>(),
+            },
+          );
         },
         backgroundColor: const Color(0xFF2C2C2C),
         elevation: 8,
