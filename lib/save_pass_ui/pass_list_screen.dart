@@ -8,19 +8,21 @@ class PasswordListScreen extends StatelessWidget {
     {'site': 'Instagram', 'password': 'instagram-password'},
   ];
 
+   PasswordListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Password Manager',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xFF2C2C2C),
+        backgroundColor: const Color(0xFF2C2C2C),
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.search, color: Colors.white),
+            icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () {
               // Логика поиска пароля
             },
@@ -28,7 +30,7 @@ class PasswordListScreen extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         itemCount: passwords.length,
         itemBuilder: (context, index) {
           return PasswordCard(
@@ -41,12 +43,12 @@ class PasswordListScreen extends StatelessWidget {
         onPressed: () {
           // Логика добавления нового пароля
         },
-        child: Icon(Icons.add, color: Colors.white),
-        backgroundColor: Color(0xFF2C2C2C),
+        backgroundColor: const Color(0xFF2C2C2C),
         elevation: 8,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -56,9 +58,10 @@ class PasswordCard extends StatefulWidget {
   final String site;
   final String password;
 
-  PasswordCard({required this.site, required this.password});
+  const PasswordCard({super.key, required this.site, required this.password});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PasswordCardState createState() => _PasswordCardState();
 }
 
@@ -92,21 +95,21 @@ class _PasswordCardState extends State<PasswordCard> {
       onTapCancel: () => _onTapUp(),
       onTap: _toggleVisibility,
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 100),
-        margin: EdgeInsets.symmetric(vertical: 10.0),
+        duration: const Duration(milliseconds: 100),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         decoration: BoxDecoration(
-          color: _isPressed ? Color(0xFF222222) : Color(0xFF2C2C2C),
+          color: _isPressed ? const Color(0xFF222222) : const Color(0xFF2C2C2C),
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.6),
-              offset: Offset(5, 5),
+              offset: const Offset(5, 5),
               blurRadius: 15,
               spreadRadius: 1,
             ),
             BoxShadow(
               color: Colors.grey.shade800,
-              offset: Offset(-5, -5),
+              offset: const Offset(-5, -5),
               blurRadius: 15,
               spreadRadius: 1,
             ),
@@ -114,38 +117,38 @@ class _PasswordCardState extends State<PasswordCard> {
         ),
         child: ListTile(
           contentPadding:
-              EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+              const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
           leading: Container(
             decoration: BoxDecoration(
-              color: Color(0xFF2C2C2C),
+              color: const Color(0xFF2C2C2C),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.6),
-                  offset: Offset(2, 2),
+                  offset: const Offset(2, 2),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
                 BoxShadow(
                   color: Colors.grey.shade800,
-                  offset: Offset(-2, -2),
+                  offset: const Offset(-2, -2),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
               ],
             ),
             child: CircleAvatar(
-              backgroundColor: Color(0xFF2C2C2C),
+              backgroundColor: const Color(0xFF2C2C2C),
               child: Text(
                 widget.site[0].toUpperCase(),
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           title: Text(
             widget.site,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18.0,
               color: Colors.white,
@@ -153,30 +156,30 @@ class _PasswordCardState extends State<PasswordCard> {
           ),
           subtitle: Text(
             _obscureText ? '••••••••' : widget.password,
-            style: TextStyle(fontSize: 16.0, color: Colors.white70),
+            style: const TextStyle(fontSize: 16.0, color: Colors.white70),
           ),
           trailing: GestureDetector(
             onTap: _toggleVisibility,
             child: Container(
               decoration: BoxDecoration(
-                color: Color(0xFF2C2C2C),
+                color: const Color(0xFF2C2C2C),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.6),
-                    offset: Offset(2, 2),
+                    offset: const Offset(2, 2),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
                   BoxShadow(
                     color: Colors.grey.shade800,
-                    offset: Offset(-2, -2),
+                    offset: const Offset(-2, -2),
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
                 ],
               ),
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Icon(
                 _obscureText ? Icons.visibility_off : Icons.visibility,
                 color: Colors.white,
