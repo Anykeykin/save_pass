@@ -13,7 +13,7 @@ class SqlLocalService {
 
     return await db.delete(
           'pass',
-          where: 'id = ?',
+          where: 'password_id = ?',
           whereArgs: [passwordId],
         ) !=
         0;
@@ -25,7 +25,7 @@ class SqlLocalService {
     return await db.update(
           'pass',
           passModel.toMap(),
-          where: 'id = ?',
+          where: 'password_id = ?',
           whereArgs: [passModel.passwordId],
         ) !=
         0;
