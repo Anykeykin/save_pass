@@ -34,6 +34,7 @@ class PasswordListScreen extends StatelessWidget {
               return PasswordCard(
                 site: state.passModel[index].passwordName,
                 password: state.passModel[index].password,
+                passwordId: state.passModel[index].passwordId,
               );
             },
           );
@@ -63,8 +64,12 @@ class PasswordListScreen extends StatelessWidget {
 class PasswordCard extends StatefulWidget {
   final String site;
   final String password;
-
-  const PasswordCard({super.key, required this.site, required this.password});
+  final int passwordId;
+  const PasswordCard(
+      {super.key,
+      required this.site,
+      required this.password,
+      required this.passwordId});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -121,52 +126,16 @@ class _PasswordCardState extends State<PasswordCard> {
             ),
           ],
         ),
-        child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-          leading: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF2C2C2C),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.6),
-                  offset: const Offset(2, 2),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                ),
-                BoxShadow(
-                  color: Colors.grey.shade800,
-                  offset: const Offset(-2, -2),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: CircleAvatar(
-              backgroundColor: const Color(0xFF2C2C2C),
-              child: Text(
-                widget.site[0].toUpperCase(),
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          title: Text(
-            widget.site,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          ),
-          subtitle: Text(
-            _obscureText ? '••••••••' : widget.password,
-            style: const TextStyle(fontSize: 16.0, color: Colors.white70),
-          ),
-          trailing: GestureDetector(
-            onTap: _toggleVisibility,
-            child: Container(
+        child: GestureDetector(
+          onLongPress: () {
+            context
+                .read<PasswordsBloc>()
+                .add(DeletePass(passwordId: widget.passwordId));
+          },
+          child: ListTile(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            leading: Container(
               decoration: BoxDecoration(
                 color: const Color(0xFF2C2C2C),
                 shape: BoxShape.circle,
@@ -185,10 +154,53 @@ class _PasswordCardState extends State<PasswordCard> {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(
-                _obscureText ? Icons.visibility_off : Icons.visibility,
+              child: CircleAvatar(
+                backgroundColor: const Color(0xFF2C2C2C),
+                child: Text(
+                  widget.site[0].toUpperCase(),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            title: Text(
+              widget.site,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
                 color: Colors.white,
+              ),
+            ),
+            subtitle: Text(
+              _obscureText ? '••••••••' : widget.password,
+              style: const TextStyle(fontSize: 16.0, color: Colors.white70),
+            ),
+            trailing: GestureDetector(
+              onTap: _toggleVisibility,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2C2C2C),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.6),
+                      offset: const Offset(2, 2),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                    BoxShadow(
+                      color: Colors.grey.shade800,
+                      offset: const Offset(-2, -2),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
