@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/create_pass_screen.dart';
+import 'package:save_pass/save_pass_ui/edit_pass_screen.dart';
 import 'package:save_pass/save_pass_ui/login_screen.dart';
 import 'package:save_pass/save_pass_ui/pass_list_screen.dart';
 import 'package:save_pass/save_pass_ui/registration_screen.dart';
@@ -14,7 +15,9 @@ class ScreenPaths {
   static const String registrationScreen = 'registrationScreen';
   static const String loginScreen = 'loginScreen';
 
-  static String createPassListScreen = 'createPassListScreen';
+  static const String createPassListScreen = 'createPassListScreen';
+
+  static const String editPassListScreen = 'editPassListScreen';
 }
 
 mixin SavePassRouter {
@@ -24,6 +27,9 @@ mixin SavePassRouter {
     }
     if (routesettings.name == ScreenPaths.createPassListScreen) {
       return createPassListScreen(routesettings.arguments);
+    }
+    if (routesettings.name == ScreenPaths.editPassListScreen) {
+      return editPassListScreen(routesettings.arguments);
     }
     if (routesettings.name == ScreenPaths.registrationScreen) {
       return registrationScreen(routesettings.arguments);
@@ -101,7 +107,7 @@ SwipeablePageRoute<void> createPassListScreen(
   Object? arguments,
 ) {
   return SwipeablePageRoute<void>(
-    settings: const RouteSettings(name: ScreenPaths.passListScreen),
+    settings: const RouteSettings(name: ScreenPaths.createPassListScreen),
     canOnlySwipeFromEdge: true,
     backGestureDetectionWidth: 1,
     builder: (BuildContext context) {
@@ -116,6 +122,30 @@ SwipeablePageRoute<void> createPassListScreen(
           ),
         ],
         child: CreatePassScreen(),
+      );
+    },
+  );
+}
+
+SwipeablePageRoute<void> editPassListScreen(
+  Object? arguments,
+) {
+  return SwipeablePageRoute<void>(
+    settings: const RouteSettings(name: ScreenPaths.editPassListScreen),
+    canOnlySwipeFromEdge: true,
+    backGestureDetectionWidth: 1,
+    builder: (BuildContext context) {
+      final Map<String, dynamic>? routeArguments =
+          arguments as Map<String, dynamic>?;
+      final PasswordsBloc passwordsBloc = routeArguments?['passwords_bloc'];
+
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider.value(
+            value: passwordsBloc,
+          ),
+        ],
+        child: EditPassScreen(),
       );
     },
   );
