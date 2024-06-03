@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'SavePass',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF2C2C2C),
+        scaffoldBackgroundColor: const Color(0xFF2C2C2C),
         brightness: Brightness.dark,
         primaryColor: Colors.teal,
         visualDensity: VisualDensity.adaptivePlatformDensity,
