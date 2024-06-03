@@ -19,6 +19,8 @@ class Login extends AuthorizationEvent {
 
 class Logout extends AuthorizationEvent {}
 
+class AutoLogin extends AuthorizationEvent {}
+
 class Register extends AuthorizationEvent {
   final String email;
   final String password;
