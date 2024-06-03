@@ -176,7 +176,17 @@ class _PasswordCardState extends State<PasswordCard> {
               style: const TextStyle(fontSize: 16.0, color: Colors.white70),
             ),
             trailing: GestureDetector(
-              onTap: _toggleVisibility,
+              onTap: (){
+                context
+                .read<PasswordsBloc>()
+                .add(InitEditPass(passwordId: widget.passwordId));
+                Navigator.of(context).pushNamed(
+            ScreenPaths.editPassListScreen,
+            arguments: {
+              'passwords_bloc': context.read<PasswordsBloc>(),
+            },
+          );
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF2C2C2C),
