@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
+import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/login_screen.dart';
 import 'package:save_pass/save_pass_ui/pass_list_screen.dart';
 import 'package:save_pass/save_pass_ui/registration_screen.dart';
@@ -35,7 +37,13 @@ SwipeablePageRoute<void> registrationScreen(
     canOnlySwipeFromEdge: true,
     backGestureDetectionWidth: 1,
     builder: (_) {
-      return RegistrationSaveScreen();
+      final Map<String, dynamic>? routeArguments =
+          arguments as Map<String, dynamic>?;
+      final AuthorizationBloc authBloc = routeArguments?['auth_bloc'];
+      return BlocProvider.value(
+        value: authBloc,
+        child: RegistrationSaveScreen(),
+      );
     },
   );
 }
@@ -48,7 +56,13 @@ SwipeablePageRoute<void> loginScreen(
     canOnlySwipeFromEdge: true,
     backGestureDetectionWidth: 1,
     builder: (_) {
-      return LoginScreen();
+      final Map<String, dynamic>? routeArguments =
+          arguments as Map<String, dynamic>?;
+      final AuthorizationBloc authBloc = routeArguments?['auth_bloc'];
+      return BlocProvider.value(
+        value: authBloc,
+        child: LoginScreen(),
+      );
     },
   );
 }
@@ -63,24 +77,13 @@ SwipeablePageRoute<void> passListScreen(
     builder: (BuildContext context) {
       final Map<String, dynamic>? routeArguments =
           arguments as Map<String, dynamic>?;
-      // final WarningBloc warningBloc = routeArguments?['warning_bloc'];
-      // final GeolocationBloc geolocationBloc =
-      //     routeArguments?['geolocation_bloc'];
-      // final ProfileBloc profileBloc = routeArguments?['profile_bloc'];
+      final PasswordsBloc passwordsBloc = routeArguments?['passwords_bloc'];
 
       return MultiBlocProvider(
         providers: [
-          // BlocProvider.value(
-          //   value: warningBloc,
-          // ),
-          // BlocProvider.value(
-          //   value: profileBloc..add(const GetUserInfo()),
-          // ),
-          // BlocProvider.value(
-          //   value: geolocationBloc
-          //     ..add(const GetCurrentGeolocation())
-          //     ..add(const GetDangerPlaces()),
-          // ),
+          BlocProvider.value(
+            value: passwordsBloc,
+          ),
         ],
         child: PasswordListScreen(),
       );
