@@ -17,14 +17,22 @@ class SavePass extends PasswordsEvent {
   List<Object> get props => [passwordName, password];
 }
 
-class EditPass extends PasswordsEvent {
+class InitEditPass extends PasswordsEvent {
   final int passwordId;
-  final String password;
 
-  const EditPass({required this.passwordId, required this.password});
+  const InitEditPass({required this.passwordId});
 
   @override
-  List<Object> get props => [passwordId, password];
+  List<Object> get props => [passwordId];
+}
+
+class EditPass extends PasswordsEvent {
+  final String password;
+
+  const EditPass({required this.password});
+
+  @override
+  List<Object> get props => [password];
 }
 
 class DeletePass extends PasswordsEvent {
