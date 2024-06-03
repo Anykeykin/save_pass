@@ -53,7 +53,9 @@ class SqlLocalService {
   }
 
   static openSqlDatabase() async {
-    final Directory libDir = await getLibraryDirectory();
+    final Directory libDir = Platform.isAndroid
+        ? await getApplicationDocumentsDirectory()
+        : await getLibraryDirectory();
     final database = openDatabase(
       join(libDir.path, 'pass.db'),
       onCreate: (db, version) {
@@ -67,7 +69,9 @@ class SqlLocalService {
   }
 
   static openAuthSqlDatabase() async {
-    final Directory libDir = await getLibraryDirectory();
+    final Directory libDir = Platform.isAndroid
+        ? await getApplicationDocumentsDirectory()
+        : await getLibraryDirectory();
     final database = openDatabase(
       join(libDir.path, 'auth.db'),
       onCreate: (db, version) {
