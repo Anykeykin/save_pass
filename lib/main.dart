@@ -23,10 +23,12 @@ void main() async {
   LocalUserRepository localUserRepository = LocalUserRepositoryImpl();
   LocalRepository localRepository = LocalRepositoryImpl();
   RemoteRepository remoteRepository = RemoteRepositoryImpl();
-  runApp(MyApp(
-    userRepository: userRepository,
-    localUserRepository: localUserRepository,
-  ));
+  runApp(
+    MyApp(
+      userRepository: userRepository,
+      localUserRepository: localUserRepository,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
