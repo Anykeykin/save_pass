@@ -6,8 +6,6 @@ import 'package:save_pass/save_pass_api/local_api/repository/local_repository.da
 import 'package:save_pass/save_pass_api/local_api/repository/local_user_repository.dart';
 import 'package:save_pass/save_pass_api/local_api/repository_impl/local_repository_impl.dart';
 import 'package:save_pass/save_pass_api/local_api/repository_impl/local_user_repository_impl.dart';
-import 'package:save_pass/save_pass_api/remote_api/datasource/initialize.dart';
-import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository_impl/remote_repository_impl.dart';
