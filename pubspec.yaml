@@ -18,6 +18,7 @@ dependencies:
   flutter_bloc: ^8.1.5
   equatable:
   swipeable_page_route: ^0.4.3
+  crypton: ^2.2.1
   
 dev_dependencies:
   flutter_test:
