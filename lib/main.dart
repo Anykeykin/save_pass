@@ -15,12 +15,9 @@ import 'package:save_pass/save_pass_api/remote_api/repository_impl/user_reposito
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  initialize();
-  SupabaseAppService.supabase = Supabase.instance.client;
   UserRepository userRepository = UserRepositoryImpl();
   LocalUserRepository localUserRepository = LocalUserRepositoryImpl();
   LocalRepository localRepository = LocalRepositoryImpl();
