@@ -82,12 +82,6 @@ class MyApp extends StatelessWidget {
                   'passwords_bloc': context.read<PasswordsBloc>(),
                 },
               );
-              // Navigator.of(context).pushNamed(
-              //   ScreenPaths.loginScreen,
-              //   arguments: {
-              //     'auth_bloc': context.read<AuthorizationBloc>(),
-              //   },
-              // );
             }
             if (state.registrationStatus == AuthorizationStatus.access) {
               Navigator.of(context).pushNamed(
