@@ -1,6 +1,7 @@
 import 'package:save_pass/save_pass_api/local_api/datasource/sql_local_service.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:save_pass/save_pass_api/models/security_level.dart';
 
 class LocalRepositoryImpl implements LocalRepository {
   @override
@@ -21,5 +22,15 @@ class LocalRepositoryImpl implements LocalRepository {
   @override
   Future<bool> savePass(PassModel passModel) async {
     return await SqlLocalService.savePass(passModel);
+  }
+
+  @override
+  Future<SecurityLevel> getSecurityLevel() async {
+    return await SqlLocalService.getSecurityLevel();
+  }
+
+  @override
+  Future<bool> saveSecurityLevel(SecurityLevel securityLevel)async{
+    return await SqlLocalService.saveLevel(securityLevel);
   }
 }
