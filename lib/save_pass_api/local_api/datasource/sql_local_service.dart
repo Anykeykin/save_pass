@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crypton/crypton.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:save_pass/save_pass_api/models/app_user.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
@@ -9,6 +10,70 @@ import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
 class SqlLocalService {
+  static getFirstKey() async {
+    final Database db = await openKeySqlDatabase();
+
+    final List<Map<String, Object?>> securityMaps = await db.query('key');
+    String key = '';
+    if (securityMaps.isEmpty) {
+      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
+      key = rsaKeypair.privateKey.toString();
+      await db.insert(
+            'key',
+            {
+              'key_id': 0,
+              'key': key,
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          ) !=
+          0;
+    }
+    if (securityMaps.isNotEmpty) {
+      key = securityMaps[0]['key'] as String;
+    }
+    return key;
+  }
+
+  static getSecondKey() async {
+    final Database db = await openKeySqlDatabase();
+
+    final List<Map<String, Object?>> securityMaps = await db.query('key');
+    String key = '';
+    if (securityMaps.isEmpty) {
+      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
+      key = rsaKeypair.privateKey.toString();
+      await db.insert(
+            'key',
+            {
+              'key_id': 1,
+              'key': key,
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          ) !=
+          0;
+    }
+    if (securityMaps.isNotEmpty) {
+      key = securityMaps[1]['key'] as String;
+    }
+    return key;
+  }
+
+  static openKeySqlDatabase() async {
+    final Directory libDir = Platform.isAndroid
+        ? await getApplicationDocumentsDirectory()
+        : await getLibraryDirectory();
+    final database = openDatabase(
+      join(libDir.path, 'keys.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE keys(key_id INTEGER PRIMARY KEY, key TEXT)',
+        );
+      },
+      version: 2,
+    );
+    return database;
+  }
+
   static openLevelSqlDatabase() async {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
