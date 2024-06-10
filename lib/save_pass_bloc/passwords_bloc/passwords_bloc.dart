@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:save_pass/save_pass_api/models/security_level.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
 
 part 'passwords_event.dart';
@@ -17,6 +18,8 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     this.remoteRepository,
     this.localRepository,
   ) : super(const PasswordsState()) {
+    on<SaveSecurityLevel>(_saveSecurityLevel);
+    on<GetSecurityLevel>(_getSecurityLevel);
     on<SavePass>(_savePass);
     on<InitEditPass>(_initEditPass);
     on<EditPass>(_editPass);
@@ -64,5 +67,23 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _initEditPass(
       InitEditPass event, Emitter<PasswordsState> emit) {
     emit(state.copyWith(passwordId: event.passwordId));
+  }
+
+  FutureOr<void> _getSecurityLevel(
+      GetSecurityLevel event, Emitter<PasswordsState> emit) async {
+    final SecurityLevel securityLevel =
+        await localRepository.getSecurityLevel();
+    emit(state.copyWith(
+      securityLevel: securityLevel.level,
+    ));
+  }
+
+  FutureOr<void> _saveSecurityLevel(
+      SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
+    await localRepository
+        .saveSecurityLevel(SecurityLevel(level: event.securityLevel));
+    emit(state.copyWith(
+      securityLevel: event.securityLevel,
+    ));
   }
 }
