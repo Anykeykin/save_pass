@@ -75,8 +75,6 @@ class _PasswordCardState extends State<PasswordCard> {
                 .add(DeletePass(passwordId: widget.passwordId));
           },
           child: ListTile(
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
             leading: Container(
               decoration: BoxDecoration(
                 color: const Color(0xFF2C2C2C),
