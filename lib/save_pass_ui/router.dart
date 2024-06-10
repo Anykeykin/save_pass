@@ -83,8 +83,9 @@ SwipeablePageRoute<void> passListScreen(
   Object? arguments,
 ) {
   return SwipeablePageRoute<void>(
+    canSwipe: false,
     settings: const RouteSettings(name: ScreenPaths.passListScreen),
-    canOnlySwipeFromEdge: true,
+    // canOnlySwipeFromEdge: true,
     backGestureDetectionWidth: 1,
     builder: (BuildContext context) {
       final Map<String, dynamic>? routeArguments =
