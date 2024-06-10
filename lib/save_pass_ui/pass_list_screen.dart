@@ -2,43 +2,112 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/router.dart';
+import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 
-class PasswordListScreen extends StatelessWidget {
+class PasswordListScreen extends StatefulWidget {
   const PasswordListScreen({super.key});
+
+  @override
+  State<PasswordListScreen> createState() => _PasswordListScreenState();
+}
+
+class _PasswordListScreenState extends State<PasswordListScreen> {
+  late PageController _pageController;
+  int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: selectedIndex);
+  }
+
+  void onButtonPressed(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+    _pageController.animateToPage(selectedIndex,
+        duration: const Duration(milliseconds: 400), curve: Curves.easeOutQuad);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Password Manager',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF2C2C2C),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {
-              // Логика поиска пароля
-            },
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Password Manager',
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      //   backgroundColor: const Color(0xFF2C2C2C),
+      //   elevation: 0,
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.search, color: Colors.white),
+      //       onPressed: () {
+      //         // Логика поиска пароля
+      //       },
+      //     ),
+      //   ],
+      // ),
+      body: Column(
+        children: <Widget>[
+          const SafeArea(
+              child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'Password Manager',
+              style: TextStyle(color: Colors.white),
+            ),
+          )),
+          Expanded(
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              children: [
+                BlocBuilder<PasswordsBloc, PasswordsState>(
+                  builder: (context, state) {
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: state.passModel.length,
+                      itemBuilder: (context, index) {
+                        return PasswordCard(
+                          site: state.passModel[index].passwordName,
+                          password: state.passModel[index].password,
+                          passwordId: state.passModel[index].passwordId,
+                        );
+                      },
+                    );
+                  },
+                ),
+                const Column(
+                  children: [
+                    Text('test'),
+                  ],
+                )
+              ],
+            ),
           ),
         ],
       ),
-      body: BlocBuilder<PasswordsBloc, PasswordsState>(
-        builder: (context, state) {
-          return ListView.builder(
-            padding: const EdgeInsets.all(10.0),
-            itemCount: state.passModel.length,
-            itemBuilder: (context, index) {
-              return PasswordCard(
-                site: state.passModel[index].passwordName,
-                password: state.passModel[index].password,
-                passwordId: state.passModel[index].passwordId,
-              );
-            },
-          );
-        },
+
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: SlidingClippedNavBar(
+          backgroundColor: const Color(0xFF2C2C2C),
+          onButtonPressed: onButtonPressed,
+          iconSize: 30,
+          activeColor: Colors.white,
+          selectedIndex: selectedIndex,
+          barItems: <BarItem>[
+            BarItem(
+              icon: Icons.event,
+              title: 'Events',
+            ),
+            BarItem(
+              icon: Icons.tune_rounded,
+              title: 'Settings',
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -176,16 +245,16 @@ class _PasswordCardState extends State<PasswordCard> {
               style: const TextStyle(fontSize: 16.0, color: Colors.white70),
             ),
             trailing: GestureDetector(
-              onTap: (){
+              onTap: () {
                 context
-                .read<PasswordsBloc>()
-                .add(InitEditPass(passwordId: widget.passwordId));
+                    .read<PasswordsBloc>()
+                    .add(InitEditPass(passwordId: widget.passwordId));
                 Navigator.of(context).pushNamed(
-            ScreenPaths.editPassListScreen,
-            arguments: {
-              'passwords_bloc': context.read<PasswordsBloc>(),
-            },
-          );
+                  ScreenPaths.editPassListScreen,
+                  arguments: {
+                    'passwords_bloc': context.read<PasswordsBloc>(),
+                  },
+                );
               },
               child: Container(
                 decoration: BoxDecoration(
