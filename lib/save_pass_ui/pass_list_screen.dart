@@ -79,11 +79,7 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
                     );
                   },
                 ),
-                const Column(
-                  children: [
-                    Text('test'),
-                  ],
-                )
+                ProtectionSettingsScreen(),
               ],
             ),
           ),
@@ -126,6 +122,82 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class ProtectionSettingsScreen extends StatefulWidget {
+  @override
+  _ProtectionSettingsScreenState createState() =>
+      _ProtectionSettingsScreenState();
+}
+
+enum ProtectionLevel { basic, medium, high }
+
+class _ProtectionSettingsScreenState extends State<ProtectionSettingsScreen> {
+  ProtectionLevel _selectedLevel = ProtectionLevel.basic;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView(
+        children: <Widget>[
+          const Text(
+            'Выберите уровень защиты:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ListTile(
+            title: const Text('Базовый'),
+            subtitle: const Text(
+              'Минимальная защита. Включает основные меры предосторожности в виде пароля при входе.',
+              style: TextStyle(fontSize: 12),
+            ),
+            leading: Radio<ProtectionLevel>(
+              value: ProtectionLevel.basic,
+              groupValue: _selectedLevel,
+              onChanged: (ProtectionLevel? value) {
+                setState(() {
+                  _selectedLevel = value!;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            title: const Text('Средний'),
+            subtitle: const Text(
+              'Рекомендуемый уровень защиты. Включает все функции базового уровня и шифрование.',
+              style: TextStyle(fontSize: 12),
+            ),
+            leading: Radio<ProtectionLevel>(
+              value: ProtectionLevel.medium,
+              groupValue: _selectedLevel,
+              onChanged: (ProtectionLevel? value) {
+                setState(() {
+                  _selectedLevel = value!;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            title: const Text('Высокий'),
+            subtitle: const Text(
+              'Максимальная защита. Включает все функции среднего уровня, а также двойное шифрование данных .',
+              style: TextStyle(fontSize: 12),
+            ),
+            leading: Radio<ProtectionLevel>(
+              value: ProtectionLevel.high,
+              groupValue: _selectedLevel,
+              onChanged: (ProtectionLevel? value) {
+                setState(() {
+                  _selectedLevel = value!;
+                });
+              },
+            ),
+          ),
+        
+        ],
       ),
     );
   }
