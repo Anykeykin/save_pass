@@ -26,6 +26,15 @@ class InitEditPass extends PasswordsEvent {
   List<Object> get props => [passwordId];
 }
 
+class GetSecurityLevel extends PasswordsEvent {
+  const GetSecurityLevel();
+}
+
+class SaveSecurityLevel extends PasswordsEvent {
+  final String securityLevel;
+  const SaveSecurityLevel({required this.securityLevel});
+}
+
 class EditPass extends PasswordsEvent {
   final String password;
 
