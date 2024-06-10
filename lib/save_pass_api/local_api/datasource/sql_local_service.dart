@@ -3,11 +3,49 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:save_pass/save_pass_api/models/app_user.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:save_pass/save_pass_api/models/security_level.dart';
 import 'package:sqflite/sqflite.dart';
 // ignore: depend_on_referenced_packages
 import "package:path/path.dart";
 
 class SqlLocalService {
+  static openLevelSqlDatabase() async {
+    final Directory libDir = Platform.isAndroid
+        ? await getApplicationDocumentsDirectory()
+        : await getLibraryDirectory();
+    final database = openDatabase(
+      join(libDir.path, 'level.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          'CREATE TABLE level(level_id INTEGER PRIMARY KEY, level TEXT)',
+        );
+      },
+      version: 2,
+    );
+    return database;
+  }
+
+  static Future<SecurityLevel> getSecurityLevel() async {
+    final Database db = await openLevelSqlDatabase();
+
+    final List<Map<String, Object?>> securityMaps = await db.query('level');
+
+    return securityMaps.isEmpty
+        ? SecurityLevel(level: 'base')
+        : SecurityLevel.fromMap(securityMaps.first);
+  }
+
+  static Future<bool> saveLevel(SecurityLevel securityLevel) async {
+    final db = await openLevelSqlDatabase();
+
+    return await db.insert(
+          'level',
+          securityLevel.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        ) !=
+        0;
+  }
+
   static Future<bool> deletePass(int passwordId) async {
     final db = await openSqlDatabase();
 
@@ -43,7 +81,7 @@ class SqlLocalService {
   }
 
   static Future<List<PassModel>> getAllPass() async {
-    final db = await openSqlDatabase();
+    final Database db = await openSqlDatabase();
 
     final List<Map<String, Object?>> passMaps = await db.query('pass');
 
