@@ -8,4 +8,6 @@ abstract class LocalRepository {
   Future<bool> deletePass(int passwordId);
   Future<bool> saveSecurityLevel(SecurityLevel securityLevel);
   Future<SecurityLevel> getSecurityLevel();
+  Future<String> getFirstKey();
+  Future<String> getSecondKey();
 }

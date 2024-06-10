@@ -30,7 +30,17 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  Future<bool> saveSecurityLevel(SecurityLevel securityLevel)async{
+  Future<bool> saveSecurityLevel(SecurityLevel securityLevel) async {
     return await SqlLocalService.saveLevel(securityLevel);
+  }
+
+  @override
+  Future<String> getFirstKey() async {
+    return await SqlLocalService.getFirstKey();
+  }
+
+  @override
+  Future<String> getSecondKey() async {
+    return await SqlLocalService.getSecondKey();
   }
 }
