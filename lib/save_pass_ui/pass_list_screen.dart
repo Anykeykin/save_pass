@@ -97,11 +97,11 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
           barItems: <BarItem>[
             BarItem(
               icon: Icons.event,
-              title: 'Events',
+              title: 'Пароли',
             ),
             BarItem(
               icon: Icons.tune_rounded,
-              title: 'Settings',
+              title: 'Настройки',
             ),
           ],
         ),
