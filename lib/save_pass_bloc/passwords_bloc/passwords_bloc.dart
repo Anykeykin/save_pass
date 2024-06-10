@@ -29,9 +29,10 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
+    final String password = savePassword(event.password);
     final PassModel newPass = PassModel(
       passwordName: event.passwordName,
-      password: event.password,
+      password: password,
       passwordId: passwordId,
     );
     await localRepository.savePass(newPass);
@@ -85,5 +86,11 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(
       securityLevel: event.securityLevel,
     ));
+  }
+
+  String savePassword(String password) {
+    if (state.securityLevel == 'medium') {}
+    if (state.securityLevel == 'hard') {}
+    return password;
   }
 }
