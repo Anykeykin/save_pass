@@ -95,9 +95,7 @@ SwipeablePageRoute<void> passListScreen(
       return MultiBlocProvider(
         providers: [
           BlocProvider.value(
-            value: passwordsBloc
-              ..add(const GetAllPass())
-              ..add(const GetSecurityLevel()),
+            value: passwordsBloc..add(const GetSecurityLevel()),
           ),
         ],
         child: const PasswordListScreen(),
