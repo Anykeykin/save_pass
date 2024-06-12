@@ -13,13 +13,15 @@ class SqlLocalService {
   static getFirstKey() async {
     final Database db = await openKeySqlDatabase();
 
-    final List<Map<String, Object?>> securityMaps = await db.query('key');
+    final List<Map<String, Object?>> securityMaps = await db.query('keys');
     String key = '';
-    if (securityMaps.isEmpty) {
+    try {
+      key = securityMaps[0]['key'] as String;
+    } catch (e) {
       RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
       key = rsaKeypair.privateKey.toString();
       await db.insert(
-            'key',
+            'keys',
             {
               'key_id': 0,
               'key': key,
@@ -28,22 +30,21 @@ class SqlLocalService {
           ) !=
           0;
     }
-    if (securityMaps.isNotEmpty) {
-      key = securityMaps[0]['key'] as String;
-    }
     return key;
   }
 
   static getSecondKey() async {
     final Database db = await openKeySqlDatabase();
 
-    final List<Map<String, Object?>> securityMaps = await db.query('key');
+    final List<Map<String, Object?>> securityMaps = await db.query('keys');
     String key = '';
-    if (securityMaps.isEmpty) {
+    try {
+      key = securityMaps[1]['key'] as String;
+    } catch (e) {
       RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
       key = rsaKeypair.privateKey.toString();
       await db.insert(
-            'key',
+            'keys',
             {
               'key_id': 1,
               'key': key,
@@ -52,9 +53,7 @@ class SqlLocalService {
           ) !=
           0;
     }
-    if (securityMaps.isNotEmpty) {
-      key = securityMaps[1]['key'] as String;
-    }
+
     return key;
   }
 
