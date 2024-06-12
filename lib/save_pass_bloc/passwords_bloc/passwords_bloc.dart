@@ -79,10 +79,10 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         await localRepository.getSecurityLevel();
     String firstKey = '';
     String secondKey = '';
-    if (state.securityLevel == 'medium') {
+    if (securityLevel.level == 'medium') {
       firstKey = await localRepository.getFirstKey();
     }
-    if (state.securityLevel == 'hard') {
+    if (securityLevel.level == 'hard') {
       firstKey = await localRepository.getFirstKey();
       secondKey = await localRepository.getSecondKey();
     }
