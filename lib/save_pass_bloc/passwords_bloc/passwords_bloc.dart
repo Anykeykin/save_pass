@@ -145,6 +145,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       String pass = firstKeyPair.privateKey.decrypt(password);
       return pass;
     }
+
     if (state.securityLevel == 'hard') {
       RSAKeypair firstKeyPair =
           RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
@@ -169,6 +170,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       return pass;
     }
 
-    return 'test' + password;
+    return password;
   }
 }
