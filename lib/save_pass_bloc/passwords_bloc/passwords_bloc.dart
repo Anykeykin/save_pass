@@ -139,43 +139,36 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   }
 
   String decryptPassword(String password) {
-    try {
-      if (state.securityLevel == 'medium') {
-        RSAKeypair firstKeyPair =
-            RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
-        String pass = firstKeyPair.privateKey.decrypt(password);
-        return pass;
-      }
-      if (state.securityLevel == 'hard') {
-        RSAKeypair firstKeyPair =
-            RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
-        RSAKeypair secondKeyPair =
-            RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
-        List testPass = [];
-        for (var i = 0; i < 344; i++) {
-          testPass.add(password.substring(344));
-          password = password.substring(344);
-          print(password.length);
-        }
-        print(testPass);
-        String encryptedPass = '';
-        for (int i = 0; i < testPass.length; i++) {
-          String pass2 = '';
-          if (i % 2 == 0) {
-            pass2 = secondKeyPair.privateKey.decrypt(testPass[i]);
-          }
-          if (i % 2 != 0) {
-            pass2 = firstKeyPair.privateKey.decrypt(testPass[i]);
-          }
-          encryptedPass = encryptedPass + pass2;
-        }
-        String pass = firstKeyPair.privateKey.decrypt(encryptedPass);
-
-        return pass;
-      }
-    } catch (e) {
-      return password;
+    if (state.securityLevel == 'medium') {
+      RSAKeypair firstKeyPair =
+          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+      String pass = firstKeyPair.privateKey.decrypt(password);
+      return pass;
     }
-    return password;
+    if (state.securityLevel == 'hard') {
+      RSAKeypair firstKeyPair =
+          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+      RSAKeypair secondKeyPair =
+          RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
+
+      String encryptedPass = '';
+      for (var i = 0; i < 344; i++) {
+        String pass2 = password.substring(0, 344);
+        password = password.substring(344);
+        if (i % 2 == 0) {
+          pass2 = secondKeyPair.privateKey.decrypt(pass2);
+        }
+        if (i % 2 != 0) {
+          pass2 = firstKeyPair.privateKey.decrypt(pass2);
+        }
+        encryptedPass = encryptedPass + pass2;
+      }
+
+      String pass = firstKeyPair.privateKey.decrypt(encryptedPass);
+
+      return pass;
+    }
+
+    return 'test' + password;
   }
 }
