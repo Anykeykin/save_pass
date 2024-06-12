@@ -119,8 +119,21 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       RSAKeypair secondKeyPair =
           RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
       String pass = firstKeyPair.publicKey.encrypt(password);
-      String pass2 = secondKeyPair.publicKey.encrypt(pass);
-      return pass2;
+      List<String> passList = pass.split('');
+      String encryptedPass = '';
+      for (int i = 0; i < passList.length; i++) {
+        String pass2 = '';
+        if (i % 2 == 0) {
+          pass2 = secondKeyPair.publicKey.encrypt(passList[i]);
+        }
+        if (i % 2 != 0) {
+          pass2 = firstKeyPair.publicKey.encrypt(passList[i]);
+        }
+        print(pass2.length);
+        encryptedPass = encryptedPass + pass2;
+      }
+
+      return encryptedPass;
     }
     return password;
   }
@@ -138,9 +151,27 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
             RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
         RSAKeypair secondKeyPair =
             RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
-        String pass = firstKeyPair.privateKey.decrypt(password);
-        String pass2 = secondKeyPair.privateKey.decrypt(pass);
-        return pass2;
+        List testPass = [];
+        for (var i = 0; i < 344; i++) {
+          testPass.add(password.substring(344));
+          password = password.substring(344);
+          print(password.length);
+        }
+        print(testPass);
+        String encryptedPass = '';
+        for (int i = 0; i < testPass.length; i++) {
+          String pass2 = '';
+          if (i % 2 == 0) {
+            pass2 = secondKeyPair.privateKey.decrypt(testPass[i]);
+          }
+          if (i % 2 != 0) {
+            pass2 = firstKeyPair.privateKey.decrypt(testPass[i]);
+          }
+          encryptedPass = encryptedPass + pass2;
+        }
+        String pass = firstKeyPair.privateKey.decrypt(encryptedPass);
+
+        return pass;
       }
     } catch (e) {
       return password;
