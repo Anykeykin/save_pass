@@ -88,7 +88,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _getSecurityLevel(
       GetSecurityLevel event, Emitter<PasswordsState> emit) async {
     SecurityLevel securityLevel = await localRepository.getSecurityLevel();
-    print(securityLevel.level);
     String level = decryptPassword(securityLevel.level);
 
     String firstKey = '';
@@ -100,7 +99,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       firstKey = await localRepository.getFirstKey();
       secondKey = await localRepository.getSecondKey();
     }
-    print(level);
     emit(
       state.copyWith(
         securityLevel: level,
@@ -122,7 +120,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       firstKey = await localRepository.getFirstKey();
       secondKey = await localRepository.getSecondKey();
     }
-    print(firstKey);
     emit(
       state.copyWith(
         securityLevel: event.securityLevel,

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_user_repository.dart';
-import 'package:save_pass/save_pass_api/models/app_user.dart';
 import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
 
 part 'authorization_event.dart';
