@@ -30,7 +30,11 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
-    final String password = savePassword(event.password);
+    final String password = savePassword(
+      event.password,
+      state.firstSecurityKey,
+      state.secondSecurityKey,
+    );
     final PassModel newPass = PassModel(
       passwordName: event.passwordName,
       password: password,
@@ -43,7 +47,11 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
     final PassModel editedPass = state.passModel
         .firstWhere((element) => element.passwordId == state.passwordId);
-    editedPass.password = savePassword(event.password);
+    editedPass.password = savePassword(
+      event.password,
+      state.firstSecurityKey,
+      state.secondSecurityKey,
+    );
     await localRepository.savePass(editedPass);
     add(const GetAllPass());
   }
@@ -59,7 +67,11 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
     for (PassModel passModel in passModels) {
-      passModel.password = decryptPassword(passModel.password);
+      passModel.password = decryptPassword(
+        passModel.password,
+        state.firstSecurityKey,
+        state.secondSecurityKey,
+      );
     }
     emit(state.copyWith(
       loadStatus: LoadStatus.success,
@@ -75,20 +87,23 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _getSecurityLevel(
       GetSecurityLevel event, Emitter<PasswordsState> emit) async {
-    final SecurityLevel securityLevel =
-        await localRepository.getSecurityLevel();
+    SecurityLevel securityLevel = await localRepository.getSecurityLevel();
+    print(securityLevel.level);
+    String level = decryptPassword(securityLevel.level);
+
     String firstKey = '';
     String secondKey = '';
-    if (securityLevel.level == 'medium') {
+    if (level == 'medium') {
       firstKey = await localRepository.getFirstKey();
     }
-    if (securityLevel.level == 'hard') {
+    if (level == 'hard') {
       firstKey = await localRepository.getFirstKey();
       secondKey = await localRepository.getSecondKey();
     }
+    print(level);
     emit(
       state.copyWith(
-        securityLevel: securityLevel.level,
+        securityLevel: level,
         firstSecurityKey: firstKey,
         secondSecurityKey: secondKey,
       ),
@@ -98,26 +113,41 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _saveSecurityLevel(
       SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
-    await localRepository
-        .saveSecurityLevel(SecurityLevel(level: event.securityLevel));
-    emit(state.copyWith(
-      securityLevel: event.securityLevel,
-    ));
-    add(const GetSecurityLevel());
+    String firstKey = '';
+    String secondKey = '';
+    if (event.securityLevel == 'medium') {
+      firstKey = await localRepository.getFirstKey();
+    }
+    if (event.securityLevel == 'hard') {
+      firstKey = await localRepository.getFirstKey();
+      secondKey = await localRepository.getSecondKey();
+    }
+    print(firstKey);
+    emit(
+      state.copyWith(
+        securityLevel: event.securityLevel,
+        firstSecurityKey: firstKey,
+        secondSecurityKey: secondKey,
+      ),
+    );
+    await localRepository.saveSecurityLevel(SecurityLevel(
+        level: savePassword(event.securityLevel, firstKey, secondKey)));
+    add(const GetAllPass());
   }
 
-  String savePassword(String password) {
+  String savePassword(
+      String password, String firstSecurityKey, String secondSecurityKey) {
     if (state.securityLevel == 'medium') {
       RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
       String pass = firstKeyPair.publicKey.encrypt(password);
       return pass;
     }
     if (state.securityLevel == 'hard') {
       RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
       RSAKeypair secondKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(secondSecurityKey));
       String pass = firstKeyPair.publicKey.encrypt(password);
       List<String> passList = pass.split('');
       String encryptedPass = '';
@@ -129,7 +159,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         if (i % 2 != 0) {
           pass2 = firstKeyPair.publicKey.encrypt(passList[i]);
         }
-        print(pass2.length);
         encryptedPass = encryptedPass + pass2;
       }
 
@@ -138,19 +167,20 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     return password;
   }
 
-  String decryptPassword(String password) {
+  String decryptPassword(
+      String password, String firstSecurityKey, String secondSecurityKey) {
     if (state.securityLevel == 'medium') {
       RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
       String pass = firstKeyPair.privateKey.decrypt(password);
       return pass;
     }
 
     if (state.securityLevel == 'hard') {
       RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.firstSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
       RSAKeypair secondKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(state.secondSecurityKey));
+          RSAKeypair(RSAPrivateKey.fromString(secondSecurityKey));
 
       String encryptedPass = '';
       for (var i = 0; i < 344; i++) {
