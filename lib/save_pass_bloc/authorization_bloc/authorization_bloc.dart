@@ -46,12 +46,12 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
 
   FutureOr<void> _autoLogin(
       AutoLogin event, Emitter<AuthorizationState> emit) async {
-    AppUser? appUser = await localUserRepository.loadAuthData();
-    if (appUser == null) {
-      emit(state.copyWith(AuthorizationStatus.denied));
-    }
-    if (appUser != null) {
-      add(Login(email: appUser.email, password: appUser.password));
-    }
+    emit(state.copyWith(AuthorizationStatus.denied));
+    // if (appUser == null) {
+    //   emit(state.copyWith(AuthorizationStatus.denied));
+    // }
+    // if (appUser != null) {
+    //   add(Login(email: appUser.email, password: appUser.password));
+    // }
   }
 }
