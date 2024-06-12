@@ -86,11 +86,13 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       firstKey = await localRepository.getFirstKey();
       secondKey = await localRepository.getSecondKey();
     }
-    emit(state.copyWith(
-      securityLevel: securityLevel.level,
-      firstSecurityKey: firstKey,
-      secondSecurityKey: secondKey,
-    ));
+    emit(
+      state.copyWith(
+        securityLevel: securityLevel.level,
+        firstSecurityKey: firstKey,
+        secondSecurityKey: secondKey,
+      ),
+    );
     add(const GetAllPass());
   }
 
