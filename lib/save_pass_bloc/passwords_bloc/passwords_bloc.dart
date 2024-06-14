@@ -11,6 +11,7 @@ import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.
 
 part 'passwords_event.dart';
 part 'passwords_state.dart';
+part 'passwords_utils.dart';
 
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   final RemoteRepository remoteRepository;
@@ -30,11 +31,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
-    final String password = savePassword(
-      event.password,
-      state.firstSecurityKey,
-      state.secondSecurityKey,
-    );
+
+    final String password = state.securityLevel == 'base'
+        ? event.password
+        : state.securityLevel == 'medium'
+            ? PasswordsUtils.mediumEncrypt(
+                event.password, state.firstSecurityKey)
+            : PasswordsUtils.hardEncrypt(event.password, state.firstSecurityKey,
+                state.secondSecurityKey);
+
     final PassModel newPass = PassModel(
       passwordName: event.passwordName,
       password: password,
@@ -47,11 +52,14 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
     final PassModel editedPass = state.passModel
         .firstWhere((element) => element.passwordId == state.passwordId);
-    editedPass.password = savePassword(
-      event.password,
-      state.firstSecurityKey,
-      state.secondSecurityKey,
-    );
+    editedPass.password = state.securityLevel == 'base'
+        ? event.password
+        : state.securityLevel == 'medium'
+            ? PasswordsUtils.mediumEncrypt(
+                event.password, state.firstSecurityKey)
+            : PasswordsUtils.hardEncrypt(event.password, state.firstSecurityKey,
+                state.secondSecurityKey);
+
     await localRepository.savePass(editedPass);
     add(const GetAllPass());
   }
@@ -67,11 +75,13 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
     for (PassModel passModel in passModels) {
-      passModel.password = decryptPassword(
-        passModel.password,
-        state.firstSecurityKey,
-        state.secondSecurityKey,
-      );
+      passModel.password = state.securityLevel == 'base'
+          ? passModel.password
+          : state.securityLevel == 'medium'
+              ? PasswordsUtils.mediumEncrypt(
+                  passModel.password, state.firstSecurityKey)
+              : PasswordsUtils.hardEncrypt(passModel.password,
+                  state.firstSecurityKey, state.secondSecurityKey);
     }
     emit(state.copyWith(
       loadStatus: LoadStatus.success,
@@ -88,7 +98,8 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _getSecurityLevel(
       GetSecurityLevel event, Emitter<PasswordsState> emit) async {
     SecurityLevel securityLevel = await localRepository.getSecurityLevel();
-    String level = decryptPassword(securityLevel.level);
+    String level = PasswordsUtils.mediumDecrypt(
+        securityLevel.level, await localRepository.getLevelKey());
 
     String firstKey = '';
     String secondKey = '';
@@ -127,76 +138,12 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         secondSecurityKey: secondKey,
       ),
     );
-    await localRepository.saveSecurityLevel(SecurityLevel(
-        level: savePassword(event.securityLevel, firstKey, secondKey)));
+    final String level = PasswordsUtils.mediumEncrypt(
+      event.securityLevel,
+      await localRepository.getLevelKey(),
+    );
+
+    await localRepository.saveSecurityLevel(SecurityLevel(level: level));
     add(const GetAllPass());
-  }
-
-  String savePassword(
-      String password, String firstSecurityKey, String secondSecurityKey) {
-    if (state.securityLevel == 'medium') {
-      RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
-      String pass = firstKeyPair.publicKey.encrypt(password);
-      return pass;
-    }
-    if (state.securityLevel == 'hard') {
-      RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
-      RSAKeypair secondKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(secondSecurityKey));
-      String pass = firstKeyPair.publicKey.encrypt(password);
-      List<String> passList = pass.split('');
-      String encryptedPass = '';
-      for (int i = 0; i < passList.length; i++) {
-        String pass2 = '';
-        if (i % 2 == 0) {
-          pass2 = secondKeyPair.publicKey.encrypt(passList[i]);
-        }
-        if (i % 2 != 0) {
-          pass2 = firstKeyPair.publicKey.encrypt(passList[i]);
-        }
-        encryptedPass = encryptedPass + pass2;
-      }
-
-      return encryptedPass;
-    }
-    return password;
-  }
-
-  String decryptPassword(
-      String password, String firstSecurityKey, String secondSecurityKey) {
-    if (state.securityLevel == 'medium') {
-      RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
-      String pass = firstKeyPair.privateKey.decrypt(password);
-      return pass;
-    }
-
-    if (state.securityLevel == 'hard') {
-      RSAKeypair firstKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
-      RSAKeypair secondKeyPair =
-          RSAKeypair(RSAPrivateKey.fromString(secondSecurityKey));
-
-      String encryptedPass = '';
-      for (var i = 0; i < 344; i++) {
-        String pass2 = password.substring(0, 344);
-        password = password.substring(344);
-        if (i % 2 == 0) {
-          pass2 = secondKeyPair.privateKey.decrypt(pass2);
-        }
-        if (i % 2 != 0) {
-          pass2 = firstKeyPair.privateKey.decrypt(pass2);
-        }
-        encryptedPass = encryptedPass + pass2;
-      }
-
-      String pass = firstKeyPair.privateKey.decrypt(encryptedPass);
-
-      return pass;
-    }
-
-    return password;
   }
 }
