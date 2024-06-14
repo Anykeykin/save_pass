@@ -10,6 +10,23 @@ import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
 class SqlLocalService {
+  static getLevelKey() async {
+    final Database db = await openKeySqlDatabase();
+
+    final List<Map<String, Object?>> securityMaps = await db.query('keys');
+    String key = '';
+    try {
+      key = securityMaps[2]['key'] as String;
+    } catch (e) {
+      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
+      key = rsaKeypair.privateKey.toString();
+      await db.insert('keys', {'key_id': 2, 'key': key},
+              conflictAlgorithm: ConflictAlgorithm.replace) !=
+          0;
+    }
+    return key;
+  }
+
   static getFirstKey() async {
     final Database db = await openKeySqlDatabase();
 
@@ -20,14 +37,8 @@ class SqlLocalService {
     } catch (e) {
       RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
       key = rsaKeypair.privateKey.toString();
-      await db.insert(
-            'keys',
-            {
-              'key_id': 0,
-              'key': key,
-            },
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          ) !=
+      await db.insert('keys', {'key_id': 0, 'key': key},
+              conflictAlgorithm: ConflictAlgorithm.replace) !=
           0;
     }
     return key;
@@ -43,14 +54,8 @@ class SqlLocalService {
     } catch (e) {
       RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
       key = rsaKeypair.privateKey.toString();
-      await db.insert(
-            'keys',
-            {
-              'key_id': 1,
-              'key': key,
-            },
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          ) !=
+      await db.insert('keys', {'key_id': 1, 'key': key},
+              conflictAlgorithm: ConflictAlgorithm.replace) !=
           0;
     }
 
