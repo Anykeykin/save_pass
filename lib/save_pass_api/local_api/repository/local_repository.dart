@@ -10,4 +10,5 @@ abstract class LocalRepository {
   Future<SecurityLevel> getSecurityLevel();
   Future<String> getFirstKey();
   Future<String> getSecondKey();
+  Future<String> getLevelKey();
 }

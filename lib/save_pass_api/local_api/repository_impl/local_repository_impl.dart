@@ -43,4 +43,9 @@ class LocalRepositoryImpl implements LocalRepository {
   Future<String> getSecondKey() async {
     return await SqlLocalService.getSecondKey();
   }
+  
+  @override
+  Future<String> getLevelKey() async{
+    return await SqlLocalService.getLevelKey();
+  }
 }
