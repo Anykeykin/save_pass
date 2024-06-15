@@ -98,8 +98,10 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _getSecurityLevel(
       GetSecurityLevel event, Emitter<PasswordsState> emit) async {
     SecurityLevel securityLevel = await localRepository.getSecurityLevel();
-    String level = PasswordsUtils.mediumDecrypt(
-        securityLevel.level, await localRepository.getLevelKey());
+    String level = securityLevel.level == 'base'
+        ? securityLevel.level
+        : PasswordsUtils.mediumDecrypt(
+            securityLevel.level, await localRepository.getLevelKey());
 
     String firstKey = '';
     String secondKey = '';
