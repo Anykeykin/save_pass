@@ -78,9 +78,9 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       passModel.password = state.securityLevel == 'base'
           ? passModel.password
           : state.securityLevel == 'medium'
-              ? PasswordsUtils.mediumEncrypt(
+              ? PasswordsUtils.mediumDecrypt(
                   passModel.password, state.firstSecurityKey)
-              : PasswordsUtils.hardEncrypt(passModel.password,
+              : PasswordsUtils.hardDecrypt(passModel.password,
                   state.firstSecurityKey, state.secondSecurityKey);
     }
     emit(state.copyWith(
