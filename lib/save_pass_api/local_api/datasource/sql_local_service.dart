@@ -73,9 +73,9 @@ class SqlLocalService {
   }
 
   static Future<bool> saveKey(SecurityKey securitykey) async {
-    final db = await openLevelSqlDatabase();
+    final db = await openKeySqlDatabase();
 
-    return await db.insert('key', securitykey.toMap(),
+    return await db.insert('keys', securitykey.toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace) !=
         0;
   }
