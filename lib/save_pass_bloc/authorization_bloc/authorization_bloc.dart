@@ -1,56 +1,96 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:crypton/crypton.dart';
 import 'package:equatable/equatable.dart';
-import 'package:save_pass/save_pass_api/local_api/repository/local_user_repository.dart';
-import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
+import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
+import 'package:save_pass/save_pass_api/models/security_level.dart';
 
 part 'authorization_event.dart';
 part 'authorization_state.dart';
 
 class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
-  final UserRepository userRepository;
-  final LocalUserRepository localUserRepository;
-  AuthorizationBloc(this.userRepository, this.localUserRepository)
-      : super(const AuthorizationState()) {
-    on<AutoLogin>(_autoLogin);
-    on<Login>(_login);
-    on<Logout>(_logout);
-    on<Register>(_register);
+  final LocalRepository localRepository;
+  AuthorizationBloc(this.localRepository) : super(const AuthorizationState()) {
+    on<Enter>(_enter);
+    on<Create>(_create);
+    on<Check>(_check);
   }
 
-  FutureOr<void> _login(Login event, Emitter<AuthorizationState> emit) async {
-    final data = await userRepository.login(event.email, event.password);
-    if (data != null) {
-      emit(state.copyWith(AuthorizationStatus.access));
-    } else {
-      emit(state.copyWith(AuthorizationStatus.error));
+  Future<FutureOr<void>> _enter(
+      Enter event, Emitter<AuthorizationState> emit) async {
+    try {
+      String firstKey = decodeKey(event.password, state.firstKey);
+      String secondKey = decodeKey(event.password, state.firstKey);
+      String levelKey = decodeKey(event.password, state.firstKey);
+
+      return state.copyWith(
+        openStatus: OpenStatus.access,
+        firstKey: firstKey,
+        secondKey: secondKey,
+        levelKey: levelKey,
+      );
+    } catch (e) {
+      return state.copyWith(
+        openStatus: OpenStatus.error,
+      );
     }
   }
 
-  FutureOr<void> _logout(Logout event, Emitter<AuthorizationState> emit) async {
-    await userRepository.logout();
-    emit(state.copyWith(AuthorizationStatus.denied));
+  Future<FutureOr<void>> _create(
+      Create event, Emitter<AuthorizationState> emit) async {
+    String firstKey = RSAKeypair.fromRandom().privateKey.toString();
+    String secondKey = RSAKeypair.fromRandom().privateKey.toString();
+    String levelKey = RSAKeypair.fromRandom().privateKey.toString();
+
+    String encFirstKey = encodeKey(event.password, firstKey);
+    await localRepository
+        .saveSecurityKey(SecurityKey(keyName: 'first_key', key: encFirstKey));
+
+    String encSecondKey = encodeKey(event.password, secondKey);
+    await localRepository
+        .saveSecurityKey(SecurityKey(keyName: 'second_key', key: encSecondKey));
+
+    String encLevelKey = encodeKey(event.password, levelKey);
+    await localRepository
+        .saveSecurityKey(SecurityKey(keyName: 'level_key', key: encLevelKey));
+
+    return state.copyWith(
+      openStatus: OpenStatus.access,
+      firstKey: firstKey,
+      secondKey: secondKey,
+      levelKey: levelKey,
+    );
   }
 
-  FutureOr<void> _register(
-      Register event, Emitter<AuthorizationState> emit) async {
-    final data = await userRepository.register(event.email, event.password);
-    if (data != null) {
-      emit(state.copyWith(AuthorizationStatus.access));
-    } else {
-      emit(state.copyWith(AuthorizationStatus.error));
+  Future<FutureOr<void>> _check(
+      Check event, Emitter<AuthorizationState> emit) async {
+    List<SecurityKey> keys = await localRepository.getKeys();
+    if (keys.isEmpty) {
+      // TODO: реализовать также удаление всех данных при этом случае
+      return state.copyWith(openStatus: OpenStatus.create);
     }
+    String firstKey = '';
+    String secondKey = '';
+    String levelKey = '';
+    for (SecurityKey key in keys) {
+      if (key.keyName == 'first_key') firstKey = key.key;
+      if (key.keyName == 'second_key') secondKey = key.key;
+      if (key.keyName == 'level_key') levelKey = key.key;
+    }
+    return state.copyWith(
+      openStatus: OpenStatus.denied,
+      firstKey: firstKey,
+      secondKey: secondKey,
+      levelKey: levelKey,
+    );
   }
 
-  FutureOr<void> _autoLogin(
-      AutoLogin event, Emitter<AuthorizationState> emit) async {
-    emit(state.copyWith(AuthorizationStatus.denied));
-    // if (appUser == null) {
-    //   emit(state.copyWith(AuthorizationStatus.denied));
-    // }
-    // if (appUser != null) {
-    //   add(Login(email: appUser.email, password: appUser.password));
-    // }
+  String decodeKey(String password, String key) {
+    return '';
+  }
+
+  String encodeKey(String password, String key) {
+    return '';
   }
 }
