@@ -17,28 +17,30 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     on<Check>(_check);
   }
 
-  Future<FutureOr<void>> _enter(
-      Enter event, Emitter<AuthorizationState> emit) async {
+  FutureOr<void> _enter(Enter event, Emitter<AuthorizationState> emit) async {
     try {
       String firstKey = decodeKey(event.password, state.firstKey);
       String secondKey = decodeKey(event.password, state.firstKey);
       String levelKey = decodeKey(event.password, state.firstKey);
 
-      return state.copyWith(
-        openStatus: OpenStatus.access,
-        firstKey: firstKey,
-        secondKey: secondKey,
-        levelKey: levelKey,
+      emit(
+        state.copyWith(
+          openStatus: OpenStatus.access,
+          firstKey: firstKey,
+          secondKey: secondKey,
+          levelKey: levelKey,
+        ),
       );
     } catch (e) {
-      return state.copyWith(
-        openStatus: OpenStatus.error,
+      emit(
+        state.copyWith(
+          openStatus: OpenStatus.error,
+        ),
       );
     }
   }
 
-  Future<FutureOr<void>> _create(
-      Create event, Emitter<AuthorizationState> emit) async {
+  FutureOr<void> _create(Create event, Emitter<AuthorizationState> emit) async {
     String firstKey = RSAKeypair.fromRandom().privateKey.toString();
     String secondKey = RSAKeypair.fromRandom().privateKey.toString();
     String levelKey = RSAKeypair.fromRandom().privateKey.toString();
@@ -55,35 +57,41 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     await localRepository
         .saveSecurityKey(SecurityKey(keyName: 'level_key', key: encLevelKey));
 
-    return state.copyWith(
-      openStatus: OpenStatus.access,
-      firstKey: firstKey,
-      secondKey: secondKey,
-      levelKey: levelKey,
+    emit(
+      state.copyWith(
+        openStatus: OpenStatus.access,
+        firstKey: firstKey,
+        secondKey: secondKey,
+        levelKey: levelKey,
+      ),
     );
   }
 
-  Future<FutureOr<void>> _check(
-      Check event, Emitter<AuthorizationState> emit) async {
+  FutureOr<void> _check(Check event, Emitter<AuthorizationState> emit) async {
     List<SecurityKey> keys = await localRepository.getKeys();
     if (keys.isEmpty) {
       // TODO: реализовать также удаление всех данных при этом случае
-      return state.copyWith(openStatus: OpenStatus.create);
+      print('yes');
+      emit(state.copyWith(openStatus: OpenStatus.create));
     }
-    String firstKey = '';
-    String secondKey = '';
-    String levelKey = '';
-    for (SecurityKey key in keys) {
-      if (key.keyName == 'first_key') firstKey = key.key;
-      if (key.keyName == 'second_key') secondKey = key.key;
-      if (key.keyName == 'level_key') levelKey = key.key;
+    if (keys.isNotEmpty) {
+      String firstKey = '';
+      String secondKey = '';
+      String levelKey = '';
+      for (SecurityKey key in keys) {
+        if (key.keyName == 'first_key') firstKey = key.key;
+        if (key.keyName == 'second_key') secondKey = key.key;
+        if (key.keyName == 'level_key') levelKey = key.key;
+      }
+      emit(
+        state.copyWith(
+          openStatus: OpenStatus.denied,
+          firstKey: firstKey,
+          secondKey: secondKey,
+          levelKey: levelKey,
+        ),
+      );
     }
-    return state.copyWith(
-      openStatus: OpenStatus.denied,
-      firstKey: firstKey,
-      secondKey: secondKey,
-      levelKey: levelKey,
-    );
   }
 
   String decodeKey(String password, String key) {
