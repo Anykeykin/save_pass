@@ -1,19 +1,22 @@
-class SecurityLevel {
-  String level;
-  SecurityLevel({
-    required this.level,
+class SecurityKey {
+  String keyName;
+  String key;
+  SecurityKey({
+    required this.keyName,
+    required this.key,
   });
 
   Map<String, Object?> toMap() {
     return {
-      'level_id': 0,
-      'level': level,
+      'key_name': keyName,
+      'key': key,
     };
   }
 
-  static SecurityLevel fromMap(Map<String, dynamic> map) {
-    return SecurityLevel(
-      level: map['level'],
+  static SecurityKey fromMap(Map<String, dynamic> map) {
+    return SecurityKey(
+      keyName: map['key_name'],
+      key: map['key'],
     );
   }
 }
