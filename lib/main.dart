@@ -3,45 +3,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
-import 'package:save_pass/save_pass_api/local_api/repository/local_user_repository.dart';
 import 'package:save_pass/save_pass_api/local_api/repository_impl/local_repository_impl.dart';
-import 'package:save_pass/save_pass_api/local_api/repository_impl/local_user_repository_impl.dart';
-import 'package:save_pass/save_pass_api/remote_api/repository/remote_repository.dart';
-import 'package:save_pass/save_pass_api/remote_api/repository/user_repository.dart';
-import 'package:save_pass/save_pass_api/remote_api/repository_impl/remote_repository_impl.dart';
-import 'package:save_pass/save_pass_api/remote_api/repository_impl/user_repository_impl.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  UserRepository userRepository = UserRepositoryImpl();
-  LocalUserRepository localUserRepository = LocalUserRepositoryImpl();
   LocalRepository localRepository = LocalRepositoryImpl();
-  RemoteRepository remoteRepository = RemoteRepositoryImpl();
   runApp(
     MyApp(
-      userRepository: userRepository,
-      localUserRepository: localUserRepository,
       localRepository: localRepository,
-      remoteRepository: remoteRepository,
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final UserRepository userRepository;
-  final LocalUserRepository localUserRepository;
   final LocalRepository localRepository;
-  final RemoteRepository remoteRepository;
 
-  const MyApp(
-      {super.key,
-      required this.userRepository,
-      required this.localUserRepository,
-      required this.localRepository,
-      required this.remoteRepository});
+  const MyApp({
+    super.key,
+    required this.localRepository,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +48,28 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) =>
-                AuthorizationBloc(userRepository, localUserRepository)
-                  ..add(AutoLogin()),
+                AuthorizationBloc(localRepository)..add(const Check()),
           ),
           BlocProvider(
-            create: (context) =>
-                PasswordsBloc(remoteRepository, localRepository),
+            create: (context) => PasswordsBloc(
+                context.read<AuthorizationBloc>(), localRepository),
           ),
         ],
         child: BlocListener<AuthorizationBloc, AuthorizationState>(
           listener: (context, state) {
-            if (state.registrationStatus == AuthorizationStatus.denied) {
+            if (state.openStatus == OpenStatus.denied) {
               Navigator.of(context).pushNamed(
-                ScreenPaths.passListScreen,
+                ScreenPaths.loginScreen,
                 arguments: {
-                  'passwords_bloc': context.read<PasswordsBloc>(),
+                  'auth_bloc': context.read<AuthorizationBloc>(),
                 },
               );
             }
-            if (state.registrationStatus == AuthorizationStatus.access) {
+            if (state.openStatus == OpenStatus.create) {
               Navigator.of(context).pushNamed(
-                ScreenPaths.passListScreen,
+                ScreenPaths.registrationScreen,
                 arguments: {
-                  'passwords_bloc': context.read<PasswordsBloc>(),
+                  'auth_bloc': context.read<AuthorizationBloc>(),
                 },
               );
             }
