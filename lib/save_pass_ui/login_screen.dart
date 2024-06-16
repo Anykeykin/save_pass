@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
-import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
-import 'package:save_pass/save_pass_ui/router.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -18,16 +16,7 @@ class LoginScreen extends StatelessWidget {
                 const SnackBar(content: Text('Введены неверные данные')));
           });
         }
-        if (state.openStatus == OpenStatus.access) {
-          Future.delayed(Duration.zero, () {
-            Navigator.of(context).pushNamed(
-              ScreenPaths.passListScreen,
-              arguments: {
-                'passwords_bloc': context.read<PasswordsBloc>(),
-              },
-            );
-          });
-        }
+
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 33, 33, 32),
           body: SafeArea(
@@ -42,16 +31,12 @@ class LoginScreen extends StatelessWidget {
                         children: [
                           const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Вход',
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
+                            child: Text(
+                              'Введите пароль',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
@@ -88,8 +73,8 @@ class LoginScreen extends StatelessWidget {
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(10)),
                             child: SizedBox(
-                              width: 329,
-                              height: 56,
+                              width: 229,
+                              height: 46,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green),
@@ -101,55 +86,16 @@ class LoginScreen extends StatelessWidget {
                                       ));
                                 },
                                 child: const Text(
-                                  "Войти",
+                                  "Ввести",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 15,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          Row(
-                            children: [
-                              const Text(
-                                'Нет аккаунта?',
-                                style: TextStyle(
-                                  color: Color(0xFF837E93),
-                                  fontSize: 13,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 2.5,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pushNamed(
-                                    ScreenPaths.registrationScreen,
-                                    arguments: {
-                                      'auth_bloc':
-                                          context.read<AuthorizationBloc>(),
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  'Зарегистрироваться',
-                                  style: TextStyle(
-                                    color: Colors.green,
                                     fontSize: 13,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ]),
                   ),
