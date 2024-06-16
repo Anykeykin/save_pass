@@ -7,19 +7,18 @@ import 'package:save_pass/save_pass_ui/router.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthorizationBloc, AuthorizationState>(
       builder: (registrationContext, state) {
-        if (state.registrationStatus == AuthorizationStatus.error) {
+        if (state.openStatus == OpenStatus.error) {
           Future.delayed(Duration.zero, () {
             ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Введены неверные данные')));
           });
         }
-        if (state.registrationStatus == AuthorizationStatus.access) {
+        if (state.openStatus == OpenStatus.access) {
           Future.delayed(Duration.zero, () {
             Navigator.of(context).pushNamed(
               ScreenPaths.passListScreen,
@@ -54,32 +53,6 @@ class LoginScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                                controller: _emailController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      borderSide: BorderSide(
-                                        width: 1,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    labelText: 'Email',
-                                    labelStyle:
-                                        TextStyle(color: Colors.green))),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -123,9 +96,9 @@ class LoginScreen extends StatelessWidget {
                                 onPressed: () {
                                   registrationContext
                                       .read<AuthorizationBloc>()
-                                      .add(Login(
-                                          email: _emailController.text,
-                                          password: _passwordController.text));
+                                      .add(Enter(
+                                        password: _passwordController.text,
+                                      ));
                                 },
                                 child: const Text(
                                   "Войти",

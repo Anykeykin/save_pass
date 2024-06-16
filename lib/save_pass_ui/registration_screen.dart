@@ -8,14 +8,13 @@ import 'package:save_pass/save_pass_ui/router.dart';
 class RegistrationSaveScreen extends StatelessWidget {
   RegistrationSaveScreen({super.key});
 
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthorizationBloc, AuthorizationState>(
       builder: (registrationContext, state) {
-        if (state.registrationStatus == AuthorizationStatus.access) {
+        if (state.openStatus == OpenStatus.access) {
           Future.delayed(Duration.zero, () {
             Navigator.of(context).pushNamed(
               ScreenPaths.loginScreen,
@@ -40,54 +39,13 @@ class RegistrationSaveScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                'Регистрация',
+                                'Создать пароль входа',
                                 style: TextStyle(
                                     color: Colors.green,
                                     fontSize: 30,
                                     fontWeight: FontWeight.w500),
                               ),
                             ],
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 5),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Email',
-                                style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: TextField(
-                                controller: _emailController,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    borderSide: BorderSide(
-                                      width: 1,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    borderSide: BorderSide(
-                                      width: 1,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                )),
                           ),
                         ),
                         const Padding(
@@ -145,8 +103,7 @@ class RegistrationSaveScreen extends StatelessWidget {
                                 onPressed: () {
                                   registrationContext
                                       .read<AuthorizationBloc>()
-                                      .add(Register(
-                                        email: _emailController.text,
+                                      .add(Create(
                                         password: _passwordController.text,
                                       ));
                                 },
