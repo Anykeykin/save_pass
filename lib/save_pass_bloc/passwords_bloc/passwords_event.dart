@@ -30,6 +30,11 @@ class GetSecurityLevel extends PasswordsEvent {
   const GetSecurityLevel();
 }
 
+class UpdateSecurityLevel extends PasswordsEvent {
+  final String securityLevel;
+  const UpdateSecurityLevel({required this.securityLevel});
+}
+
 class SaveSecurityLevel extends PasswordsEvent {
   final String securityLevel;
   const SaveSecurityLevel({required this.securityLevel});

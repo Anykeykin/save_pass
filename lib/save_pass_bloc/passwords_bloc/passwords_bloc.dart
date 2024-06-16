@@ -21,6 +21,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   ) : super(const PasswordsState()) {
     on<SaveSecurityLevel>(_saveSecurityLevel);
     on<GetSecurityLevel>(_getSecurityLevel);
+    on<UpdateSecurityLevel>(_updateSecurityLevel);
     on<SavePass>(_savePass);
     on<InitEditPass>(_initEditPass);
     on<EditPass>(_editPass);
@@ -125,5 +126,16 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     );
 
     await localRepository.saveLevel(level);
+  }
+
+  FutureOr<void> _updateSecurityLevel(
+      UpdateSecurityLevel event, Emitter<PasswordsState> emit) async {
+    final String level = PasswordsUtils.mediumEncrypt(
+      event.securityLevel,
+      authorizationBloc.state.levelKey,
+    );
+
+    await localRepository.saveLevel(level);
+    add(const GetSecurityLevel());
   }
 }
