@@ -20,8 +20,8 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   FutureOr<void> _enter(Enter event, Emitter<AuthorizationState> emit) async {
     try {
       String firstKey = decodeKey(event.password, state.firstKey);
-      String secondKey = decodeKey(event.password, state.firstKey);
-      String levelKey = decodeKey(event.password, state.firstKey);
+      String secondKey = decodeKey(event.password, state.secondKey);
+      String levelKey = decodeKey(event.password, state.levelKey);
 
       emit(
         state.copyWith(
@@ -59,7 +59,7 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
 
     emit(
       state.copyWith(
-        openStatus: OpenStatus.access,
+        openStatus: OpenStatus.denied,
         firstKey: firstKey,
         secondKey: secondKey,
         levelKey: levelKey,
@@ -71,7 +71,6 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     List<SecurityKey> keys = await localRepository.getKeys();
     if (keys.isEmpty) {
       // TODO: реализовать также удаление всех данных при этом случае
-      print('yes');
       emit(state.copyWith(openStatus: OpenStatus.create));
     }
     if (keys.isNotEmpty) {
@@ -95,10 +94,10 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   }
 
   String decodeKey(String password, String key) {
-    return '';
+    return key;
   }
 
   String encodeKey(String password, String key) {
-    return '';
+    return key;
   }
 }
