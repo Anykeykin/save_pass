@@ -36,30 +36,13 @@ class RegistrationSaveScreen extends StatelessWidget {
                       children: [
                         const Padding(
                           padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Создать пароль входа',
-                                style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 5),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Пароль',
-                                style: TextStyle(
-                                    color: Colors.green,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ],
+                          child: Text(
+                            'Создайте пароль для входа',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 20,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                         ClipRRect(
@@ -108,10 +91,10 @@ class RegistrationSaveScreen extends StatelessWidget {
                                       ));
                                 },
                                 child: const Text(
-                                  "Зарегистрироваться",
+                                  "Создать",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 15,
+                                    fontSize: 13,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -122,42 +105,6 @@ class RegistrationSaveScreen extends StatelessWidget {
                         ),
                         const SizedBox(
                           height: 25,
-                        ),
-                        Row(
-                          children: [
-                            const Text(
-                              'Уже есть аккаунт?',
-                              style: TextStyle(
-                                color: Color(0xFF837E93),
-                                fontSize: 13,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 2.5,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                  ScreenPaths.loginScreen,
-                                  arguments: {
-                                    'auth_bloc':
-                                        context.read<AuthorizationBloc>(),
-                                  },
-                                );
-                              },
-                              child: const Text(
-                                'Войти',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 13,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ]),
                 ),
