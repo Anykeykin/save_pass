@@ -73,6 +73,14 @@ class MyApp extends StatelessWidget {
                 },
               );
             }
+            if (state.openStatus == OpenStatus.access) {
+              Navigator.of(context).pushNamed(
+                ScreenPaths.passListScreen,
+                arguments: {
+                  'passwords_bloc': context.read<PasswordsBloc>(),
+                },
+              );
+            }
           },
           child: const LoadingScreen(),
         ),
