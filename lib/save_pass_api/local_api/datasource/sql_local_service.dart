@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:crypton/crypton.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:save_pass/save_pass_api/models/app_user.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
@@ -10,56 +9,35 @@ import 'package:sqflite/sqflite.dart';
 import "package:path/path.dart";
 
 class SqlLocalService {
-  static getLevelKey() async {
-    final Database db = await openKeySqlDatabase();
+  static Future<bool> saveLevel(String securityLevel) async {
+    final db = await openLevelSqlDatabase();
 
-    final List<Map<String, Object?>> securityMaps = await db.query('keys');
-    String key = '';
-    try {
-      key = securityMaps[2]['key'] as String;
-    } catch (e) {
-      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
-      key = rsaKeypair.privateKey.toString();
-      await db.insert('keys', {'key_id': 2, 'key': key},
-              conflictAlgorithm: ConflictAlgorithm.replace) !=
-          0;
-    }
-    return key;
+    return await db.insert('level', {'level_id': 0, 'level': securityLevel},
+            conflictAlgorithm: ConflictAlgorithm.replace) !=
+        0;
   }
 
-  static getFirstKey() async {
-    final Database db = await openKeySqlDatabase();
+  static getLevel() async {
+    final Database db = await openLevelSqlDatabase();
 
-    final List<Map<String, Object?>> securityMaps = await db.query('keys');
-    String key = '';
+    final List<Map<String, Object?>> securityMaps = await db.query('level');
+    String level = '';
     try {
-      key = securityMaps[0]['key'] as String;
+      level = securityMaps[0][level] as String;
     } catch (e) {
-      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
-      key = rsaKeypair.privateKey.toString();
-      await db.insert('keys', {'key_id': 0, 'key': key},
-              conflictAlgorithm: ConflictAlgorithm.replace) !=
-          0;
+      print('error');
     }
-    return key;
+    return level;
   }
 
-  static getSecondKey() async {
+  static getKeys() async {
     final Database db = await openKeySqlDatabase();
 
-    final List<Map<String, Object?>> securityMaps = await db.query('keys');
-    String key = '';
-    try {
-      key = securityMaps[1]['key'] as String;
-    } catch (e) {
-      RSAKeypair rsaKeypair = RSAKeypair.fromRandom();
-      key = rsaKeypair.privateKey.toString();
-      await db.insert('keys', {'key_id': 1, 'key': key},
-              conflictAlgorithm: ConflictAlgorithm.replace) !=
-          0;
-    }
+    final List<Map<String, Object?>> keys = await db.query('keys');
 
-    return key;
+    return [
+      for (final key in keys) SecurityKey.fromMap(key),
+    ];
   }
 
   static openKeySqlDatabase() async {
@@ -70,7 +48,7 @@ class SqlLocalService {
       join(libDir.path, 'keys.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE keys(key_id INTEGER PRIMARY KEY, key TEXT)',
+          'CREATE TABLE keys(key_name TEXT PRIMARY KEY, key TEXT)',
         );
       },
       version: 2,
@@ -94,24 +72,11 @@ class SqlLocalService {
     return database;
   }
 
-  static Future<SecurityLevel> getSecurityLevel() async {
-    final Database db = await openLevelSqlDatabase();
-
-    final List<Map<String, Object?>> securityMaps = await db.query('level');
-
-    return securityMaps.isEmpty
-        ? SecurityLevel(level: 'base')
-        : SecurityLevel.fromMap(securityMaps.first);
-  }
-
-  static Future<bool> saveLevel(SecurityLevel securityLevel) async {
+  static Future<bool> saveKey(SecurityKey securitykey) async {
     final db = await openLevelSqlDatabase();
 
-    return await db.insert(
-          'level',
-          securityLevel.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        ) !=
+    return await db.insert('key', securitykey.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace) !=
         0;
   }
 
