@@ -6,9 +6,8 @@ abstract class LocalRepository {
   Future<List<PassModel>> getAllPass();
   Future<bool> editPass(PassModel passModel);
   Future<bool> deletePass(int passwordId);
-  Future<bool> saveSecurityLevel(SecurityLevel securityLevel);
-  Future<SecurityLevel> getSecurityLevel();
-  Future<String> getFirstKey();
-  Future<String> getSecondKey();
-  Future<String> getLevelKey();
+  Future<bool> saveSecurityKey(SecurityKey securityKey);
+  Future<List<SecurityKey>> getKeys();
+  Future<bool> saveLevel(String level);
+  Future<String> getLevel();
 }
