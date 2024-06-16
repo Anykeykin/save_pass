@@ -155,7 +155,7 @@ class ProtectionSettingsScreen extends StatelessWidget {
                     if (level != null) {
                       context
                           .read<PasswordsBloc>()
-                          .add(SaveSecurityLevel(securityLevel: level));
+                          .add(UpdateSecurityLevel(securityLevel: level));
                     }
                   },
                 ),
@@ -173,7 +173,7 @@ class ProtectionSettingsScreen extends StatelessWidget {
                     if (level != null) {
                       context
                           .read<PasswordsBloc>()
-                          .add(SaveSecurityLevel(securityLevel: level));
+                          .add(UpdateSecurityLevel(securityLevel: level));
                     }
                   },
                 ),
@@ -191,7 +191,7 @@ class ProtectionSettingsScreen extends StatelessWidget {
                     if (level != null) {
                       context
                           .read<PasswordsBloc>()
-                          .add(SaveSecurityLevel(securityLevel: level));
+                          .add(UpdateSecurityLevel(securityLevel: level));
                     }
                   },
                 ),
