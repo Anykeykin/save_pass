@@ -23,9 +23,9 @@ class SqlLocalService {
     final List<Map<String, Object?>> securityMaps = await db.query('level');
     String level = '';
     try {
-      level = securityMaps[0][level] as String;
+      level = securityMaps[0]['level'] as String;
     } catch (e) {
-      print('error');
+      print(e);
     }
     return level;
   }
