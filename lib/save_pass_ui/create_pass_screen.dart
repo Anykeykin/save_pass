@@ -25,16 +25,12 @@ class CreatePassScreen extends StatelessWidget {
                         children: [
                           const Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Text(
-                                  'Создание пароля',
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
+                            child: Text(
+                              'Создание пароля',
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500),
                             ),
                           ),
                           Padding(
