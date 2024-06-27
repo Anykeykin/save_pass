@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  encrypt_decrypt_plus
   url_launcher_windows
 )
 

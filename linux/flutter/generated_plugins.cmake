@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  encrypt_decrypt_plus
   gtk
   url_launcher_linux
 )
