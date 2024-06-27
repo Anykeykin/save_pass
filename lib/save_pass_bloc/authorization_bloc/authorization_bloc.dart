@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
+import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/security_level.dart';
@@ -94,10 +97,18 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   }
 
   String decodeKey(String password, String key) {
-    return key;
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+
+    Cipher cipher = Cipher();
+    return cipher.xorDecode(key, secretKey: base64Encode(digest.bytes));
   }
 
   String encodeKey(String password, String key) {
-    return key;
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+
+    Cipher cipher = Cipher();
+    return cipher.xorEncode(key, secretKey: base64Encode(digest.bytes));
   }
 }
