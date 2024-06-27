@@ -11,11 +11,7 @@ import 'package:save_pass/save_pass_ui/router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LocalRepository localRepository = LocalRepositoryImpl();
-  runApp(
-    MyApp(
-      localRepository: localRepository,
-    ),
-  );
+  runApp(MyApp(localRepository: localRepository));
 }
 
 class MyApp extends StatelessWidget {
