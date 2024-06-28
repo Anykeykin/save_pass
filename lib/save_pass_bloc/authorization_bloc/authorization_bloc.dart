@@ -50,15 +50,15 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
 
     String encFirstKey = encodeKey(event.password, firstKey);
     await localRepository
-        .saveSecurityKey(SecurityKey(keyName: 'first_key', key: encFirstKey));
+        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'first_key') , key: encFirstKey));
 
     String encSecondKey = encodeKey(event.password, secondKey);
     await localRepository
-        .saveSecurityKey(SecurityKey(keyName: 'second_key', key: encSecondKey));
+        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'second_key'), key: encSecondKey));
 
     String encLevelKey = encodeKey(event.password, levelKey);
     await localRepository
-        .saveSecurityKey(SecurityKey(keyName: 'level_key', key: encLevelKey));
+        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'level_key'), key: encLevelKey));
 
     emit(
       state.copyWith(
@@ -81,9 +81,10 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       String secondKey = '';
       String levelKey = '';
       for (SecurityKey key in keys) {
-        if (key.keyName == 'first_key') firstKey = key.key;
-        if (key.keyName == 'second_key') secondKey = key.key;
-        if (key.keyName == 'level_key') levelKey = key.key;
+        String keyName = decodeKey('1234', key.keyName);
+        if (keyName == 'first_key') firstKey = key.key;
+        if (keyName == 'second_key') secondKey = key.key;
+        if (keyName == 'level_key') levelKey = key.key;
       }
       emit(
         state.copyWith(
