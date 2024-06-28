@@ -1,6 +1,22 @@
 part of 'passwords_bloc.dart';
 
 class PasswordsUtils extends Equatable {
+  static String decodeKey(String password, String key) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+
+    Cipher cipher = Cipher();
+    return cipher.xorDecode(key, secretKey: base64Encode(digest.bytes));
+  }
+
+  static String encodeKey(String password, String key) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+
+    Cipher cipher = Cipher();
+    return cipher.xorEncode(key, secretKey: base64Encode(digest.bytes));
+  }
+
   static String mediumEncrypt(String password, String firstSecurityKey) {
     RSAKeypair firstKeyPair =
         RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
