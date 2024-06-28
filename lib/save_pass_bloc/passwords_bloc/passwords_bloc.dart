@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
+import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/models/pass_model.dart';
@@ -41,7 +44,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
                 state.secondSecurityKey);
 
     final PassModel newPass = PassModel(
-      passwordName: event.passwordName,
+      passwordName: PasswordsUtils.encodeKey('1234',event.passwordName),
       password: password,
       passwordId: passwordId,
     );
@@ -75,6 +78,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
     for (PassModel passModel in passModels) {
+      passModel.passwordName = PasswordsUtils.decodeKey('1234',passModel.passwordName);
       passModel.password = state.securityLevel == 'base'
           ? passModel.password
           : state.securityLevel == 'medium'
