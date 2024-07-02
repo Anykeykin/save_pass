@@ -35,6 +35,10 @@ class UpdateSecurityLevel extends PasswordsEvent {
   const UpdateSecurityLevel({required this.securityLevel});
 }
 
+class MigratePass extends PasswordsEvent {
+  const MigratePass();
+}
+
 class SaveSecurityLevel extends PasswordsEvent {
   final String securityLevel;
   const SaveSecurityLevel({required this.securityLevel});
