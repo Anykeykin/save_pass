@@ -30,6 +30,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     on<EditPass>(_editPass);
     on<DeletePass>(_deletePass);
     on<GetAllPass>(_getAllPass);
+    on<MigratePass>(_migratePass);
   }
 
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
@@ -63,7 +64,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
             : PasswordsUtils.hardEncrypt(event.password, state.firstSecurityKey,
                 state.secondSecurityKey);
 
-    await localRepository.savePass(editedPass);
+    await localRepository.editPass(editedPass);
     add(const GetAllPass());
   }
 
@@ -78,7 +79,8 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
     for (PassModel passModel in passModels) {
-      passModel.passwordName = PasswordsUtils.decodeKey('1234',passModel.passwordName);
+      passModel.passwordName =
+          PasswordsUtils.decodeKey('1234', passModel.passwordName);
       passModel.password = state.securityLevel == 'base'
           ? passModel.password
           : state.securityLevel == 'medium'
@@ -140,6 +142,24 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     );
 
     await localRepository.saveLevel(level);
-    add(const GetSecurityLevel());
+    emit(state.copyWith(
+      securityLevel: event.securityLevel,
+    ));
+    add(const MigratePass());
+  }
+
+  FutureOr<void> _migratePass(
+      MigratePass event, Emitter<PasswordsState> emit) async {
+    for (PassModel pass in state.passModel) {
+     pass.passwordName = PasswordsUtils.encodeKey('1234', pass.passwordName);
+      pass.password = state.securityLevel == 'base'
+          ? pass.password
+          : state.securityLevel == 'medium'
+              ? PasswordsUtils.mediumEncrypt(
+                  pass.password, state.firstSecurityKey)
+              : PasswordsUtils.hardEncrypt(pass.password,
+                  state.firstSecurityKey, state.secondSecurityKey);
+      await localRepository.editPass(pass);
+    }
   }
 }
