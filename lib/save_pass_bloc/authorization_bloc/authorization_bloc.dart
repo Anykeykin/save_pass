@@ -63,9 +63,9 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     emit(
       state.copyWith(
         openStatus: OpenStatus.denied,
-        firstKey: firstKey,
-        secondKey: secondKey,
-        levelKey: levelKey,
+        firstKey: encFirstKey,
+        secondKey: encSecondKey,
+        levelKey: encLevelKey,
       ),
     );
   }
