@@ -25,6 +25,7 @@ class EditPassScreen extends StatelessWidget {
                           const Padding(
                             padding: EdgeInsets.all(8.0),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   'Изменение пароля',
