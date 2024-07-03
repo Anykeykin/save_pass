@@ -54,8 +54,11 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   }
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
+    final List<PassModel> passModels = state.passModel;
     final PassModel editedPass = state.passModel
         .firstWhere((element) => element.passwordId == state.passwordId);
+    editedPass.passwordName =
+        PasswordsUtils.encodeKey('1234', editedPass.passwordName);
     editedPass.password = state.securityLevel == 'base'
         ? event.password
         : state.securityLevel == 'medium'
@@ -65,7 +68,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
                 state.secondSecurityKey);
 
     await localRepository.editPass(editedPass);
-    add(const GetAllPass());
+
+    passModels
+        .firstWhere((element) => element.passwordId == state.passwordId)
+        .password = event.password;
+    emit(state.copyWith(
+      loadStatus: LoadStatus.success,
+      passModel: passModels,
+      passwordId: 0,
+    ));
   }
 
   FutureOr<void> _deletePass(
