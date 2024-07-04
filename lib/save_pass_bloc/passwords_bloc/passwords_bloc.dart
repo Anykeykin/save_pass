@@ -158,7 +158,8 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _migratePass(
       MigratePass event, Emitter<PasswordsState> emit) async {
-    for (PassModel pass in state.passModel) {
+        final List<PassModel> passModels = List.of(state.passModel);
+    for (PassModel pass in passModels) {
      pass.passwordName = PasswordsUtils.encodeKey('1234', pass.passwordName);
       pass.password = state.securityLevel == 'base'
           ? pass.password
