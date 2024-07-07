@@ -18,10 +18,10 @@ part 'passwords_utils.dart';
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   final AuthorizationBloc authorizationBloc;
   final LocalRepository localRepository;
-  PasswordsBloc(
-    this.authorizationBloc,
-    this.localRepository,
-  ) : super(const PasswordsState()) {
+  PasswordsBloc({
+    required this.authorizationBloc,
+    required this.localRepository,
+  }) : super(const PasswordsState()) {
     on<SaveSecurityLevel>(_saveSecurityLevel);
     on<GetSecurityLevel>(_getSecurityLevel);
     on<UpdateSecurityLevel>(_updateSecurityLevel);
@@ -45,7 +45,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
                 state.secondSecurityKey);
 
     final PassModel newPass = PassModel(
-      passwordName: PasswordsUtils.encodeKey('1234',event.passwordName),
+      passwordName: PasswordsUtils.encodeKey('1234', event.passwordName),
       password: password,
       passwordId: passwordId,
     );
@@ -53,7 +53,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     add(const GetAllPass());
   }
 
-  PassModel changePass(List<PassModel> passModel, String password){
+  PassModel changePass(List<PassModel> passModel, String password) {
     final PassModel editedPass = passModel
         .firstWhere((element) => element.passwordId == state.passwordId);
     editedPass.passwordName =
@@ -61,15 +61,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     editedPass.password = state.securityLevel == 'base'
         ? password
         : state.securityLevel == 'medium'
-            ? PasswordsUtils.mediumEncrypt(
-                password, state.firstSecurityKey)
-            : PasswordsUtils.hardEncrypt(password, state.firstSecurityKey,
-                state.secondSecurityKey);
+            ? PasswordsUtils.mediumEncrypt(password, state.firstSecurityKey)
+            : PasswordsUtils.hardEncrypt(
+                password, state.firstSecurityKey, state.secondSecurityKey);
     return editedPass;
   }
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
-    final PassModel editedPass = changePass(List.of(state.passModel),event.password);
+    final PassModel editedPass =
+        changePass(List.of(state.passModel), event.password);
 
     await localRepository.editPass(editedPass);
 
@@ -148,27 +148,29 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       event.securityLevel,
       authorizationBloc.state.levelKey,
     );
-
-    await localRepository.saveLevel(level);
     emit(state.copyWith(
       securityLevel: event.securityLevel,
     ));
+    await localRepository.saveLevel(level);
+
     add(const MigratePass());
   }
 
   FutureOr<void> _migratePass(
       MigratePass event, Emitter<PasswordsState> emit) async {
-        final List<PassModel> passModels = List.of(state.passModel);
-    for (PassModel pass in passModels) {
-     pass.passwordName = PasswordsUtils.encodeKey('1234', pass.passwordName);
-      pass.password = state.securityLevel == 'base'
-          ? pass.password
-          : state.securityLevel == 'medium'
-              ? PasswordsUtils.mediumEncrypt(
-                  pass.password, state.firstSecurityKey)
-              : PasswordsUtils.hardEncrypt(pass.password,
-                  state.firstSecurityKey, state.secondSecurityKey);
-      await localRepository.editPass(pass);
+    for (PassModel pass in state.passModel) {
+      final PassModel newPass = PassModel(
+          passwordName: PasswordsUtils.encodeKey('1234', pass.passwordName),
+          password: state.securityLevel == 'base'
+              ? pass.password
+              : state.securityLevel == 'medium'
+                  ? PasswordsUtils.mediumEncrypt(
+                      pass.password, state.firstSecurityKey)
+                  : PasswordsUtils.hardEncrypt(pass.password,
+                      state.firstSecurityKey, state.secondSecurityKey),
+          passwordId: pass.passwordId);
+
+      await localRepository.editPass(newPass);
     }
   }
 }
