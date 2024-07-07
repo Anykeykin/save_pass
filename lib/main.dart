@@ -58,7 +58,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => PasswordsBloc(
-                context.read<AuthorizationBloc>(), localRepository),
+              authorizationBloc: context.read<AuthorizationBloc>(),
+              localRepository: localRepository,
+            ),
           ),
         ],
         child: BlocListener<AuthorizationBloc, AuthorizationState>(
