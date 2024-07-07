@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/password_cards.dart';
 import 'package:save_pass/save_pass_ui/router.dart';
@@ -33,22 +34,6 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text(
-      //     'Password Manager',
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      //   backgroundColor: const Color(0xFF2C2C2C),
-      //   elevation: 0,
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(Icons.search, color: Colors.white),
-      //       onPressed: () {
-      //         // Логика поиска пароля
-      //       },
-      //     ),
-      //   ],
-      // ),
       body: Column(
         children: <Widget>[
           const SafeArea(
@@ -66,14 +51,15 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
               children: [
                 BlocBuilder<PasswordsBloc, PasswordsState>(
                   builder: (context, state) {
+                    final List<PassModel> passModel = state.passModel;
                     return ListView.builder(
                       padding: const EdgeInsets.all(10.0),
-                      itemCount: state.passModel.length,
+                      itemCount: passModel.length,
                       itemBuilder: (context, index) {
                         return PasswordCard(
-                          site: state.passModel[index].passwordName,
-                          password: state.passModel[index].password,
-                          passwordId: state.passModel[index].passwordId,
+                          site: passModel[index].passwordName,
+                          password: passModel[index].password,
+                          passwordId: passModel[index].passwordId,
                         );
                       },
                     );
