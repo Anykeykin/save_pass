@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
@@ -86,17 +87,29 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       GetAllPass event, Emitter<PasswordsState> emit) async {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
+    String firstSecurityKey = state.firstSecurityKey;
+    String secondSecurityKey = state.secondSecurityKey;
+    String securityLevel = state.securityLevel;
     for (PassModel passModel in passModels) {
-      passModel.passwordName =
-          PasswordsUtils.decodeKey('1234', passModel.passwordName);
-      passModel.password = state.securityLevel == 'base'
-          ? passModel.password
-          : state.securityLevel == 'medium'
-              ? PasswordsUtils.mediumDecrypt(
-                  passModel.password, state.firstSecurityKey)
-              : PasswordsUtils.hardDecrypt(passModel.password,
-                  state.firstSecurityKey, state.secondSecurityKey);
+      passModel.password = await Isolate.run(() {
+        return securityLevel == 'base'
+            ? passModel.password
+            : securityLevel == 'medium'
+                ? PasswordsUtils.mediumDecrypt(
+                    passModel.password,
+                    firstSecurityKey,
+                  )
+                : PasswordsUtils.hardDecrypt(
+                    passModel.password,
+                    firstSecurityKey,
+                    secondSecurityKey,
+                  );
+      });
+      passModel.passwordName = await Isolate.run(() {
+        return PasswordsUtils.decodeKey('1234', passModel.passwordName);
+      });
     }
+
     emit(state.copyWith(
       loadStatus: LoadStatus.success,
       passModel: passModels,
