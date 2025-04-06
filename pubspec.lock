@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  domain:
+    dependency: "direct main"
+    description:
+      path: "packages/domain"
+      relative: true
+    source: path
+    version: "1.0.0"
   encrypt_decrypt_plus:
     dependency: "direct main"
     description:

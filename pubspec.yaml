@@ -22,7 +22,9 @@ dependencies:
   sliding_clipped_nav_bar: ^3.1.1
   crypto: ^3.0.3
   encrypt_decrypt_plus: ^1.2.0
-  
+  domain: 
+    path: packages/domain
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter
