@@ -7,8 +7,6 @@ class PasswordsState extends Equatable {
   final List<PassModel> passModel;
   final int passwordId;
   final String securityLevel;
-  final String firstSecurityKey;
-  final String secondSecurityKey;
 
   @override
   List<Object?> get props => [
@@ -16,8 +14,6 @@ class PasswordsState extends Equatable {
         passModel,
         passwordId,
         securityLevel,
-        firstSecurityKey,
-        secondSecurityKey,
       ];
 
   const PasswordsState({
@@ -25,8 +21,6 @@ class PasswordsState extends Equatable {
     this.passModel = const [],
     this.passwordId = 0,
     this.securityLevel = 'base',
-    this.firstSecurityKey = '',
-    this.secondSecurityKey = '',
   });
 
   PasswordsState copyWith({
@@ -34,16 +28,13 @@ class PasswordsState extends Equatable {
     List<PassModel>? passModel,
     int? passwordId,
     String? securityLevel,
-    String? firstSecurityKey,
-    String? secondSecurityKey,
+    
   }) {
     return PasswordsState(
       passModel: passModel ?? this.passModel,
       loadStatus: loadStatus ?? this.loadStatus,
       passwordId: passwordId ?? this.passwordId,
       securityLevel: securityLevel ?? this.securityLevel,
-      firstSecurityKey: firstSecurityKey ?? this.firstSecurityKey,
-      secondSecurityKey: secondSecurityKey ?? this.secondSecurityKey,
     );
   }
 }
