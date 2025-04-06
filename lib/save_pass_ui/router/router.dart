@@ -9,15 +9,6 @@ import 'package:save_pass/save_pass_ui/pass_list_screen.dart';
 import 'package:save_pass/save_pass_ui/registration_screen.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
-class ScreenPaths {
-  static const String start = '/';
-  static const String passListScreen = 'passListScreen';
-  static const String registrationScreen = 'registrationScreen';
-  static const String loginScreen = 'loginScreen';
-  static const String createPassListScreen = 'createPassListScreen';
-  static const String editPassListScreen = 'editPassListScreen';
-}
-
 mixin SavePassRouter {
   static Route<dynamic> routes(RouteSettings routesettings) {
     if (routesettings.name == ScreenPaths.passListScreen) {
