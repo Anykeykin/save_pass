@@ -10,7 +10,6 @@ import 'package:domain/models/pass_model.dart';
 import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:domain/local_repository/local_repository.dart';
-import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 
 part 'passwords_event.dart';
 part 'passwords_state.dart';
