@@ -1,0 +1,38 @@
+{
+    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    
+        {
+            "name": "save_pass",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "save_pass (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "save_pass (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "domain",
+            "cwd": "packages/domain",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "local_data",
+            "cwd": "packages/local_data",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}
