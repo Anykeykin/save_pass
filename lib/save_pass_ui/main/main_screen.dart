@@ -16,6 +16,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late PageController _pageController;
   int selectedIndex = 0;
+  final Color _primaryColor = const Color(0xFF009688);
 
   @override
   void initState() {
@@ -23,76 +24,76 @@ class _MainScreenState extends State<MainScreen> {
     _pageController = PageController(initialPage: selectedIndex);
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void onButtonPressed(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-    _pageController.animateToPage(selectedIndex,
-        duration: const Duration(milliseconds: 400), curve: Curves.easeOutQuad);
+    setState(() => selectedIndex = index);
+    _pageController.animateToPage(
+      selectedIndex,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeOutQuad,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          const SafeArea(
-              child: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Password Manager',
-              style: TextStyle(color: Colors.white),
-            ),
-          )),
-          Expanded(
-            child: PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              children: const [
-                PasswordsScreen(),
-                ProtectionSettingsScreen(),
-              ],
-            ),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Password Manager',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: _primaryColor,
+        foregroundColor: isDark ? Colors.white : _primaryColor,
+      ),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        children: const [
+          PasswordsScreen(),
+          ProtectionSettingsScreen(),
+        ],
+      ),
+      bottomNavigationBar: SlidingClippedNavBar(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        onButtonPressed: onButtonPressed,
+        iconSize: 26,
+        activeColor: _primaryColor,
+        inactiveColor: isDark ? Colors.white54 : Colors.grey,
+        selectedIndex: selectedIndex,
+        barItems: [
+          BarItem(
+            icon: Icons.lock_outline,
+            title: 'Пароли',
+          ),
+          BarItem(
+            icon: Icons.settings_outlined,
+            title: 'Настройки',
           ),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: SlidingClippedNavBar(
-          backgroundColor: const Color(0xFF2C2C2C),
-          onButtonPressed: onButtonPressed,
-          iconSize: 30,
-          activeColor: Colors.white,
-          selectedIndex: selectedIndex,
-          barItems: <BarItem>[
-            BarItem(
-              icon: Icons.event,
-              title: 'Пароли',
-            ),
-            BarItem(
-              icon: Icons.tune_rounded,
-              title: 'Настройки',
-            ),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Логика добавления нового пароля
-          Navigator.of(context).pushNamed(
-            ScreenPaths.createPassListScreen,
-            arguments: {
-              'passwords_bloc': context.read<PasswordsBloc>(),
-            },
-          );
-        },
-        backgroundColor: const Color(0xFF2C2C2C),
-        elevation: 8,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        onPressed: () => Navigator.of(context).pushNamed(
+          ScreenPaths.createPassListScreen,
+          arguments: {'passwords_bloc': context.read<PasswordsBloc>()},
         ),
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: _primaryColor,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
