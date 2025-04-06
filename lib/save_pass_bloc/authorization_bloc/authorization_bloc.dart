@@ -7,7 +7,7 @@ import 'package:crypton/crypton.dart';
 import 'package:domain/models/security_level.dart';
 import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
-import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
+import 'package:domain/local_repository/local_repository.dart';
 
 part 'authorization_event.dart';
 part 'authorization_state.dart';
