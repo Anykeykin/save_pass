@@ -6,14 +6,14 @@ import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
 import 'package:save_pass/save_pass_ui/settings/settings_screen.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 
-class PasswordListScreen extends StatefulWidget {
-  const PasswordListScreen({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<PasswordListScreen> createState() => _PasswordListScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _PasswordListScreenState extends State<PasswordListScreen> {
+class _MainScreenState extends State<MainScreen> {
   late PageController _pageController;
   int selectedIndex = 0;
 

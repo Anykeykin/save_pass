@@ -5,7 +5,7 @@ import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/pass/create_pass_screen.dart';
 import 'package:save_pass/save_pass_ui/pass/edit_pass_screen.dart';
 import 'package:save_pass/save_pass_ui/authorization/login_screen.dart';
-import 'package:save_pass/save_pass_ui/pass/pass_list_screen.dart';
+import 'package:save_pass/save_pass_ui/main/main_screen.dart';
 import 'package:save_pass/save_pass_ui/authorization/registration_screen.dart';
 import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
@@ -88,7 +88,7 @@ SwipeablePageRoute<void> passListScreen(
             value: passwordsBloc..add(const GetSecurityLevel()),
           ),
         ],
-        child: const PasswordListScreen(),
+        child: const MainScreen(),
       );
     },
   );
