@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
+import 'package:domain/local_repository/local_repository.dart';
 import 'package:save_pass/save_pass_api/local_api/repository_impl/local_repository_impl.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
