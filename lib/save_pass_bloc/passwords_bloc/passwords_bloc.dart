@@ -16,7 +16,6 @@ part 'passwords_state.dart';
 part 'passwords_utils.dart';
 
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
-  // final AuthorizationBloc authorizationBloc;
   final LocalRepository localRepository;
   PasswordsBloc({
     required this.localRepository,
