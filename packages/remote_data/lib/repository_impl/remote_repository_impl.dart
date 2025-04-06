@@ -1,6 +1,6 @@
 import 'package:domain/models/pass_model.dart';
 import 'package:domain/remote_repository/remote_repository.dart';
-import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
+import '../datasource/supabase_services.dart';
 
 class RemoteRepositoryImpl implements RemoteRepository {
   @override

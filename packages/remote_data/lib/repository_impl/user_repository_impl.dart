@@ -1,4 +1,4 @@
-import 'package:save_pass/save_pass_api/remote_api/datasource/supabase_services.dart';
+import '../datasource/supabase_services.dart';
 import 'package:domain/remote_repository/user_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
