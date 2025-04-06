@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
-import 'package:save_pass/save_pass_ui/router.dart';
+import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
 
 class PasswordCard extends StatefulWidget {
   final String site;
