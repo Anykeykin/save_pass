@@ -23,6 +23,8 @@ dependencies:
     path: packages/domain
   local_data: 
     path: packages/local_data
+  remote_data:
+    path: packages/remote_data
     
 dev_dependencies:
   flutter_test:
