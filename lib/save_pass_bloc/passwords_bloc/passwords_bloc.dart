@@ -17,10 +17,9 @@ part 'passwords_state.dart';
 part 'passwords_utils.dart';
 
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
-  final AuthorizationBloc authorizationBloc;
+  // final AuthorizationBloc authorizationBloc;
   final LocalRepository localRepository;
   PasswordsBloc({
-    required this.authorizationBloc,
     required this.localRepository,
   }) : super(const PasswordsState()) {
     on<SaveSecurityLevel>(_saveSecurityLevel);
@@ -139,14 +138,14 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     }
     if (encryptedLevel.isNotEmpty) {
       level = PasswordsUtils.mediumDecrypt(
-          await localRepository.getLevel(), authorizationBloc.state.levelKey);
+          await localRepository.getLevel(), LocalRepository.levelKey);
     }
 
     emit(
       state.copyWith(
         securityLevel: level,
-        firstSecurityKey: authorizationBloc.state.firstKey,
-        secondSecurityKey: authorizationBloc.state.secondKey,
+        firstSecurityKey: LocalRepository.firstKey,
+        secondSecurityKey: LocalRepository.secondKey,
       ),
     );
     add(const GetAllPass());
@@ -156,7 +155,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
     final String level = PasswordsUtils.mediumEncrypt(
       event.securityLevel,
-      authorizationBloc.state.levelKey,
+      LocalRepository.levelKey,
     );
 
     await localRepository.saveLevel(level);
@@ -166,7 +165,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       UpdateSecurityLevel event, Emitter<PasswordsState> emit) async {
     final String level = PasswordsUtils.mediumEncrypt(
       event.securityLevel,
-      authorizationBloc.state.levelKey,
+      LocalRepository.levelKey,
     );
     emit(state.copyWith(
       securityLevel: event.securityLevel,
