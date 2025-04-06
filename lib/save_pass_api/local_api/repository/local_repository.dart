@@ -10,4 +10,5 @@ abstract class LocalRepository {
   Future<List<SecurityKey>> getKeys();
   Future<bool> saveLevel(String level);
   Future<String> getLevel();
+  Future<void> initDatabase();
 }
