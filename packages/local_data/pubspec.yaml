@@ -1,14 +1,17 @@
 name: local_data
 description: A starting point for Dart libraries or applications.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+publish_to: none
 
 environment:
   sdk: ^3.1.5
 
 # Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
+  domain: 
+    path: ../domain
+  sqflite: ^2.3.2
+  path_provider:
 
 dev_dependencies:
   lints: ^2.0.0
