@@ -25,6 +25,10 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       String firstKey = decodeKey(event.password, state.firstKey);
       String secondKey = decodeKey(event.password, state.secondKey);
       String levelKey = decodeKey(event.password, state.levelKey);
+      
+      LocalRepository.levelKey = levelKey;
+      LocalRepository.secondKey = secondKey;
+      LocalRepository.firstKey = firstKey;
 
       emit(
         state.copyWith(
