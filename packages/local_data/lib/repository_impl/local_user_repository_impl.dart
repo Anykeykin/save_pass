@@ -1,6 +1,6 @@
 import 'package:domain/models/app_user.dart';
-import 'package:save_pass/save_pass_api/local_api/datasource/sql_local_service.dart';
 import 'package:domain/local_repository/local_user_repository.dart';
+import 'package:local_data/datasource/sql_local_service.dart';
 
 class LocalUserRepositoryImpl implements LocalUserRepository {
   @override
