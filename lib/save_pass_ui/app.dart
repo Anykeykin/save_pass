@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:domain/local_repository/local_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,7 +48,9 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: BlocListener<AuthorizationBloc, AuthorizationState>(
-          listener: (context, state) {
+          listener: (context, state) async{
+            await Future.delayed(const Duration(seconds: 1),(){});
+
             if (state.openStatus == OpenStatus.denied) {
               Navigator.of(context).pushNamed(
                 ScreenPaths.loginScreen,
