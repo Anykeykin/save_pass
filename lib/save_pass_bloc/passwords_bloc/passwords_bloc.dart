@@ -6,10 +6,10 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
+import 'package:domain/models/pass_model.dart';
 import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
-import 'package:save_pass/save_pass_api/models/pass_model.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 
 part 'passwords_event.dart';

@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
+import 'package:domain/models/security_level.dart';
 import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:save_pass/save_pass_api/local_api/repository/local_repository.dart';
-import 'package:save_pass/save_pass_api/models/security_level.dart';
 
 part 'authorization_event.dart';
 part 'authorization_state.dart';
