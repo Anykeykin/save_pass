@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_ui/pass/password_cards.dart';
+import 'package:save_pass/save_pass_ui/pass/passwords_screen.dart';
 import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
 import 'package:save_pass/save_pass_ui/settings/settings_screen.dart';
 import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
@@ -49,30 +50,14 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
             child: PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _pageController,
-              children: [
-                BlocBuilder<PasswordsBloc, PasswordsState>(
-                  builder: (context, state) {
-                    final List<PassModel> passModel = state.passModel;
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(10.0),
-                      itemCount: passModel.length,
-                      itemBuilder: (context, index) {
-                        return PasswordCard(
-                          site: passModel[index].passwordName,
-                          password: passModel[index].password,
-                          passwordId: passModel[index].passwordId,
-                        );
-                      },
-                    );
-                  },
-                ),
-                const ProtectionSettingsScreen(),
+              children: const [
+                PasswordsScreen(),
+                ProtectionSettingsScreen(),
               ],
             ),
           ),
         ],
       ),
-
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
         child: SlidingClippedNavBar(
@@ -113,5 +98,3 @@ class _PasswordListScreenState extends State<PasswordListScreen> {
     );
   }
 }
-
-
