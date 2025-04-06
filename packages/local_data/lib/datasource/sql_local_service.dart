@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:domain/models/app_user.dart';
 import 'package:domain/models/pass_model.dart';
 import 'package:domain/models/security_level.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 // ignore: depend_on_referenced_packages
 import "package:path/path.dart";
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SqlLocalService {
   static Future<bool> saveLevel(String securityLevel) async {
