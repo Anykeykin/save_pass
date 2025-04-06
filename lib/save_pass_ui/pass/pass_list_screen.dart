@@ -1,8 +1,6 @@
-import 'package:domain/models/pass_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
-import 'package:save_pass/save_pass_ui/pass/password_cards.dart';
 import 'package:save_pass/save_pass_ui/pass/passwords_screen.dart';
 import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
 import 'package:save_pass/save_pass_ui/settings/settings_screen.dart';
