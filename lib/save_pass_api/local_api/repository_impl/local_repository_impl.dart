@@ -43,4 +43,17 @@ class LocalRepositoryImpl implements LocalRepository {
   Future<String> getLevel() async {
     return await SqlLocalService.getLevel();
   }
+
+  @override
+  Future<void> initDatabase() async {
+    try {
+      SqlLocalService.openKeySqlDatabase();
+    } catch (e) {}
+    try {
+      SqlLocalService.openSqlDatabase();
+    } catch (e) {}
+    try {
+      SqlLocalService.openLevelSqlDatabase();
+    } catch (e) {}
+  }
 }
