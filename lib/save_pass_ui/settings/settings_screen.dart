@@ -7,8 +7,10 @@ class ProtectionSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const Color primaryColor = Color(0xFF009688);
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: BlocBuilder<PasswordsBloc, PasswordsState>(
@@ -26,10 +28,8 @@ class ProtectionSettingsScreen extends StatelessWidget {
                         currentLevel: state.securityLevel,
                         title: 'Базовый',
                         icon: Icons.lock_outline,
-                        gradientColors: [
-                          Colors.blue.shade100,
-                          Colors.blue.shade200,
-                        ],
+                        primaryColor: primaryColor,
+                        isDark: isDark,
                         description: 'Минимальная защита с паролем при входе',
                         benefits: const [
                           'Защита паролем',
@@ -42,14 +42,12 @@ class ProtectionSettingsScreen extends StatelessWidget {
                         currentLevel: state.securityLevel,
                         title: 'Средний',
                         icon: Icons.lock,
-                        gradientColors: [
-                          Colors.purple.shade100,
-                          Colors.purple.shade200,
-                        ],
+                        primaryColor: primaryColor,
+                        isDark: isDark,
                         description: 'Рекомендуемый уровень с шифрованием',
                         benefits: const [
                           'Все базовые функции',
-                          'Шифрование',
+                          'Шифрование паролей',
                         ],
                         onChanged: _handleLevelChange(context),
                       ),
@@ -59,10 +57,8 @@ class ProtectionSettingsScreen extends StatelessWidget {
                         currentLevel: state.securityLevel,
                         title: 'Максимальный',
                         icon: Icons.security,
-                        gradientColors: [
-                          Colors.red.shade100,
-                          Colors.red.shade200,
-                        ],
+                        primaryColor: primaryColor,
+                        isDark: isDark,
                         description: 'Полная защита всех данных',
                         benefits: const [
                           'Все средние функции',
@@ -82,16 +78,18 @@ class ProtectionSettingsScreen extends StatelessWidget {
   }
 
   ValueChanged<String?> _handleLevelChange(BuildContext context) {
+    final primaryColor = const Color(0xFF009688);
+    
     return (level) {
       if (level != null) {
         context.read<PasswordsBloc>().add(
               UpdateSecurityLevel(securityLevel: level),
             );
 
-        // Анимация выбора
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
+            backgroundColor: primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -105,11 +103,10 @@ class ProtectionSettingsScreen extends StatelessWidget {
 
   String _levelName(String level) {
     return {
-          'base': 'Базовый',
-          'medium': 'Средний',
-          'hard': 'Максимальный',
-        }[level] ??
-        '';
+      'base': 'Базовый',
+      'medium': 'Средний',
+      'hard': 'Максимальный',
+    }[level] ?? '';
   }
 }
 
@@ -118,6 +115,9 @@ class _HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = const Color(0xFF009688);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,13 +125,16 @@ class _HeaderSection extends StatelessWidget {
           'Безопасность паролей',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : primaryColor,
               ),
         ),
         const SizedBox(height: 8),
         Text(
           'Выберите подходящий уровень защиты для ваших данных',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: isDark 
+                    ? Colors.white70 
+                    : Colors.black.withOpacity(0.7),
               ),
         ),
       ],
@@ -144,7 +147,8 @@ class _SecurityOptionCard extends StatelessWidget {
   final String currentLevel;
   final String title;
   final IconData icon;
-  final List<Color> gradientColors;
+  final Color primaryColor;
+  final bool isDark;
   final String description;
   final List<String> benefits;
   final ValueChanged<String?> onChanged;
@@ -154,7 +158,8 @@ class _SecurityOptionCard extends StatelessWidget {
     required this.currentLevel,
     required this.title,
     required this.icon,
-    required this.gradientColors,
+    required this.primaryColor,
+    required this.isDark,
     required this.description,
     required this.benefits,
     required this.onChanged,
@@ -163,98 +168,79 @@ class _SecurityOptionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = level == currentLevel;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
+    return Card(
+      elevation: isSelected ? 4 : 2,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        side: BorderSide(
+          color: isSelected ? primaryColor : Colors.transparent,
+          width: 2,
         ),
-        boxShadow: [
-          if (isSelected)
-            BoxShadow(
-              color: gradientColors.last.withOpacity(0.4),
-              blurRadius: 10,
-              spreadRadius: 2,
-              offset: const Offset(0, 4),
-            ),
-        ],
-        border: isSelected
-            ? Border.all(
-                color: Theme.of(context).colorScheme.primary,
-                width: 2,
-              )
-            : null,
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () => onChanged(level),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(icon, color: Colors.white),
+      color: bgColor,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => onChanged(level),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    child: Icon(icon, color: primaryColor),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const Spacer(),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: isSelected
+                        ? Icon(Icons.check_circle, color: primaryColor)
+                        : Icon(Icons.circle_outlined,
+                            color: isDark ? Colors.white54 : Colors.grey),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: isDark ? Colors.white70 : Colors.black87,
                     ),
-                    const Spacer(),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: isSelected
-                          ? const Icon(Icons.check_circle, color: Colors.white)
-                          : const Icon(Icons.circle_outlined,
-                              color: Colors.white70),
+              ),
+              const SizedBox(height: 16),
+              ...benefits.map((benefit) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check_circle_outline,
+                            size: 16, color: primaryColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          benefit,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: isDark ? Colors.white70 : Colors.black87,
+                              ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  description,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                ),
-                const SizedBox(height: 16),
-                ...benefits.map((benefit) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          Icon(Icons.check_circle_outline,
-                              size: 16, color: Colors.white),
-                          const SizedBox(width: 8),
-                          Text(
-                            benefit,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.white.withOpacity(0.9),
-                                    ),
-                          ),
-                        ],
-                      ),
-                    )),
-              ],
-            ),
+                  )),
+            ],
           ),
         ),
       ),
