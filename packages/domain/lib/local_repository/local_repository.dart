@@ -4,6 +4,11 @@ import 'package:domain/models/pass_model.dart';
 import 'package:domain/models/security_level.dart';
 
 abstract class LocalRepository {
+  static late String levelKey;
+  static late String firstKey;
+  static late String secondKey;
+
+
   Future<bool> savePass(PassModel passModel);
   Future<List<PassModel>> getAllPass();
   Future<bool> editPass(PassModel passModel);
