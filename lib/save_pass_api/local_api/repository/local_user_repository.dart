@@ -1,4 +1,5 @@
-import 'package:save_pass/save_pass_api/models/app_user.dart';
+
+import 'package:domain/models/app_user.dart';
 
 abstract class LocalUserRepository {
   Future<bool> saveAuthData(AppUser appUser);

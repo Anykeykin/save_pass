@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_print
 
-import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:domain/models/pass_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAppService {

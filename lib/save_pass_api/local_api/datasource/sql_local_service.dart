@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:domain/models/app_user.dart';
+import 'package:domain/models/pass_model.dart';
+import 'package:domain/models/security_level.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:save_pass/save_pass_api/models/app_user.dart';
-import 'package:save_pass/save_pass_api/models/pass_model.dart';
-import 'package:save_pass/save_pass_api/models/security_level.dart';
 import 'package:sqflite/sqflite.dart';
 // ignore: depend_on_referenced_packages
 import "package:path/path.dart";

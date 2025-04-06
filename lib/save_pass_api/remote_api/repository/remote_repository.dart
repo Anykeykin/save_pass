@@ -1,4 +1,5 @@
-import 'package:save_pass/save_pass_api/models/pass_model.dart';
+import 'package:domain/models/pass_model.dart';
+
 
 abstract class RemoteRepository {
   Future<bool> savePass(

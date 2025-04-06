@@ -1,5 +1,7 @@
-import 'package:save_pass/save_pass_api/models/pass_model.dart';
-import 'package:save_pass/save_pass_api/models/security_level.dart';
+
+
+import 'package:domain/models/pass_model.dart';
+import 'package:domain/models/security_level.dart';
 
 abstract class LocalRepository {
   Future<bool> savePass(PassModel passModel);
