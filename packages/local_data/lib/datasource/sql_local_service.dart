@@ -10,7 +10,7 @@ import 'package:sqflite/sqflite.dart';
 
 class SqlLocalService {
   static Future<bool> saveLevel(String securityLevel) async {
-    final db = await openLevelSqlDatabase();
+    final Database db = await openLevelSqlDatabase();
 
     return await db.insert('level', {'level_id': 0, 'level': securityLevel},
             conflictAlgorithm: ConflictAlgorithm.replace) !=
