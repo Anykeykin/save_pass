@@ -20,9 +20,13 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
 
   FutureOr<void> _enter(Enter event, Emitter<AuthorizationState> emit) async {
     try {
-      String firstKey = decodeKey(event.password, state.firstKey);
-      String secondKey = decodeKey(event.password, state.secondKey);
-      String levelKey = decodeKey(event.password, state.levelKey);
+      String password = event.password;
+      while (password.length != 16) {
+        password = password + password[0];
+      }
+      String firstKey = decodeKey(password, state.firstKey);
+      String secondKey = decodeKey(password, state.secondKey);
+      String levelKey = decodeKey(password, state.levelKey);
 
       LocalRepository.levelKey = levelKey;
       LocalRepository.secondKey = secondKey;
@@ -49,17 +53,20 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     String firstKey = RSAKeypair.fromRandom().privateKey.toString();
     String secondKey = RSAKeypair.fromRandom().privateKey.toString();
     String levelKey = RSAKeypair.fromRandom().privateKey.toString();
-
-    String encFirstKey = encodeKey(event.password, firstKey);
+    String password = event.password;
+    while (password.length != 16) {
+      password = password + password[0];
+    }
+    String encFirstKey = encodeKey(password, firstKey);
     await localRepository.saveSecurityKey(SecurityKey(
         keyName: encodeKey('1234567890123456', 'first_key'), key: encFirstKey));
 
-    String encSecondKey = encodeKey(event.password, secondKey);
+    String encSecondKey = encodeKey(password, secondKey);
     await localRepository.saveSecurityKey(SecurityKey(
         keyName: encodeKey('1234567890123456', 'second_key'),
         key: encSecondKey));
 
-    String encLevelKey = encodeKey(event.password, levelKey);
+    String encLevelKey = encodeKey(password, levelKey);
     await localRepository.saveSecurityKey(SecurityKey(
         keyName: encodeKey('1234567890123456', 'level_key'), key: encLevelKey));
 
@@ -110,7 +117,7 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
   String encodeKey(String password, String key) {
     var bytes = utf8.encode(password);
     var iv = utf8.encode(password);
-    
+
     return SmartEncrypt.encrypt(key, bytes, iv);
   }
 }
