@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -54,10 +53,15 @@ class EncryptUtils {
   }
 
   static String mediumDecrypt(String password, String firstSecurityKey) {
-    RSAKeypair firstKeyPair =
-        RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
-    String pass = firstKeyPair.privateKey.decrypt(password);
-    return pass;
+    try {
+      RSAKeypair firstKeyPair =
+          RSAKeypair(RSAPrivateKey.fromString(firstSecurityKey));
+      String pass = firstKeyPair.privateKey.decrypt(password);
+      return pass;
+    } catch (e) {
+      print(e);
+      return '';
+    }
   }
 
   static String hardDecrypt(
