@@ -1,7 +1,5 @@
 
-# Save File Manager
-
-Save File Manager - приложение для безопасного хранения данных на MacOS, Windows и Android/IOS.
+# Save Pass
 
 Save Pass - приложение для безопасного хранения паролей будет переделана в Save File Manager.
 
