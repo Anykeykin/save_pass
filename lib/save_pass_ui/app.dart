@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
+import 'package:save_pass/save_pass_bloc/security_level_bloc/security_level_bloc.dart';
 import 'package:save_pass/save_pass_ui/loading/loading_screen.dart';
 import 'package:save_pass/save_pass_ui/router/router.dart';
 import 'package:save_pass/save_pass_ui/router/screen_paths.dart';
@@ -46,10 +47,15 @@ class MyApp extends StatelessWidget {
               localRepository: localRepository,
             ),
           ),
+          BlocProvider(
+            create: (context) => SecurityLevelBloc(
+              localRepository: localRepository,
+            ),
+          ),
         ],
         child: BlocListener<AuthorizationBloc, AuthorizationState>(
-          listener: (context, state) async{
-            await Future.delayed(const Duration(seconds: 1),(){});
+          listener: (context, state) async {
+            await Future.delayed(const Duration(seconds: 1), () {});
 
             if (state.openStatus == OpenStatus.denied) {
               Navigator.of(context).pushNamed(
@@ -68,10 +74,14 @@ class MyApp extends StatelessWidget {
               );
             }
             if (state.openStatus == OpenStatus.access) {
+              context
+                  .read<SecurityLevelBloc>()
+                  .add(const GetSecurityLevel());
               Navigator.of(context).pushNamed(
                 ScreenPaths.passListScreen,
                 arguments: {
                   'passwords_bloc': context.read<PasswordsBloc>(),
+                  'security_level_bloc': context.read<SecurityLevelBloc>(),
                 },
               );
             }
