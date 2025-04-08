@@ -28,6 +28,8 @@ class SecurityLevelBloc extends Bloc<SecurityLevelEvent, SecurityLevelState> {
       level = EncryptUtils.mediumDecrypt(
           await localRepository.getLevel(), LocalRepository.levelKey);
 
+      LocalRepository.securityLevel = level;
+      
       emit(
         state.copyWith(
           securityLevel: level,
@@ -44,7 +46,7 @@ class SecurityLevelBloc extends Bloc<SecurityLevelEvent, SecurityLevelState> {
     );
 
     await localRepository.saveLevel(level);
-
+    LocalRepository.securityLevel = event.securityLevel;
     emit(
       state.copyWith(
         securityLevel: event.securityLevel,
