@@ -38,4 +38,16 @@
 - encrypt_decrypt_plus: Для XOR-шифрования
 - smart_encrypt: Для AES-шифрования ключей безопасности
 
+## Скриншоты приложения  
 
+### Окно входа 
+![Окно входа](assets/screenshots/login.png) 
+
+### Окно паролей 
+![Выбор уровня шифрования](assets/screenshots/settings.png)  
+
+### Настройки безопасности  
+![Выбор уровня шифрования](assets/screenshots/settings.png)  
+
+### Добавление пароля
+![Добавление пароля](assets/screenshots/create.png)
