@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
@@ -79,7 +81,7 @@ class ProtectionSettingsScreen extends StatelessWidget {
   }
 
   ValueChanged<String?> _handleLevelChange(BuildContext context) {
-    final primaryColor = const Color(0xFF009688);
+    const primaryColor = Color(0xFF009688);
 
     return (level) async {
       if (level != null) {
@@ -121,7 +123,7 @@ class _HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = const Color(0xFF009688);
+    const primaryColor = Color(0xFF009688);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(

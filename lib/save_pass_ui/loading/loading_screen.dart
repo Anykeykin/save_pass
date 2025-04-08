@@ -124,7 +124,7 @@ class _LoadingScreenState extends State<LoadingScreen>
 class _GradientTransform extends GradientTransform {
   final double progress;
   
-  _GradientTransform(this.progress);
+  const _GradientTransform(this.progress);
   
   @override
   Matrix4 transform(Rect bounds, {TextDirection? textDirection}) {
