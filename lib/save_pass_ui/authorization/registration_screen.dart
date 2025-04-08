@@ -54,6 +54,7 @@ class RegistrationSaveScreen extends StatelessWidget {
 
                     // Password Field
                     TextField(
+                      maxLength: 16,
                       controller: _passwordController,
                       obscureText: true,
                       style: TextStyle(
