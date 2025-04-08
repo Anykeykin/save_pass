@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
+import 'package:save_pass/save_pass_bloc/security_level_bloc/security_level_bloc.dart';
 
 class ProtectionSettingsScreen extends StatelessWidget {
   const ProtectionSettingsScreen({super.key});
@@ -13,7 +13,7 @@ class ProtectionSettingsScreen extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: BlocBuilder<PasswordsBloc, PasswordsState>(
+        child: BlocBuilder<SecurityLevelBloc, SecurityLevelState>(
           builder: (context, state) {
             return Column(
               children: [
@@ -79,11 +79,11 @@ class ProtectionSettingsScreen extends StatelessWidget {
 
   ValueChanged<String?> _handleLevelChange(BuildContext context) {
     final primaryColor = const Color(0xFF009688);
-    
+
     return (level) {
       if (level != null) {
-        context.read<PasswordsBloc>().add(
-              UpdateSecurityLevel(securityLevel: level),
+        context.read<SecurityLevelBloc>().add(
+              SaveSecurityLevel(securityLevel: level),
             );
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,10 +103,11 @@ class ProtectionSettingsScreen extends StatelessWidget {
 
   String _levelName(String level) {
     return {
-      'base': 'Базовый',
-      'medium': 'Средний',
-      'hard': 'Максимальный',
-    }[level] ?? '';
+          'base': 'Базовый',
+          'medium': 'Средний',
+          'hard': 'Максимальный',
+        }[level] ??
+        '';
   }
 }
 
@@ -132,9 +133,7 @@ class _HeaderSection extends StatelessWidget {
         Text(
           'Выберите подходящий уровень защиты для ваших данных',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isDark 
-                    ? Colors.white70 
-                    : Colors.black.withOpacity(0.7),
+                color: isDark ? Colors.white70 : Colors.black.withOpacity(0.7),
               ),
         ),
       ],
@@ -233,7 +232,10 @@ class _SecurityOptionCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           benefit,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
                                 color: isDark ? Colors.white70 : Colors.black87,
                               ),
                         ),
