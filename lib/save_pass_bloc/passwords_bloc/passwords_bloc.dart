@@ -1,28 +1,24 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
-import 'package:crypto/crypto.dart';
-import 'package:crypton/crypton.dart';
 import 'package:domain/models/pass_model.dart';
-import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:domain/local_repository/local_repository.dart';
+import 'package:save_pass/save_pass_bloc/utils/encrypt_utils.dart';
 
 part 'passwords_event.dart';
 part 'passwords_state.dart';
-part 'passwords_utils.dart';
 
 class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   final LocalRepository localRepository;
   PasswordsBloc({
     required this.localRepository,
   }) : super(const PasswordsState()) {
-    on<SaveSecurityLevel>(_saveSecurityLevel);
-    on<GetSecurityLevel>(_getSecurityLevel);
-    on<UpdateSecurityLevel>(_updateSecurityLevel);
+    // on<SaveSecurityLevel>(_saveSecurityLevel);
+    // on<GetSecurityLevel>(_getSecurityLevel);
+    // on<UpdateSecurityLevel>(_updateSecurityLevel);
     on<SavePass>(_savePass);
     on<InitEditPass>(_initEditPass);
     on<EditPass>(_editPass);
@@ -41,14 +37,14 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         return securityLevel == 'base'
             ? event.password
             : securityLevel == 'medium'
-                ? PasswordsUtils.mediumEncrypt(event.password, firstSecurityKey)
-                : PasswordsUtils.hardEncrypt(
+                ? EncryptUtils.mediumEncrypt(event.password, firstSecurityKey)
+                : EncryptUtils.hardEncrypt(
                     event.password, firstSecurityKey, secondSecurityKey);
       },
     );
 
     final PassModel newPass = PassModel(
-      passwordName: PasswordsUtils.encodeKey('1234', event.passwordName),
+      passwordName: EncryptUtils.encodeKey('1234', event.passwordName),
       password: password,
       passwordId: passwordId,
     );
@@ -67,12 +63,12 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       return securityLevel == 'base'
           ? userPassword
           : securityLevel == 'medium'
-              ? PasswordsUtils.mediumEncrypt(userPassword, firstSecurityKey)
-              : PasswordsUtils.hardEncrypt(
+              ? EncryptUtils.mediumEncrypt(userPassword, firstSecurityKey)
+              : EncryptUtils.hardEncrypt(
                   userPassword, firstSecurityKey, secondSecurityKey);
     });
     final PassModel newPass = PassModel(
-      passwordName: PasswordsUtils.encodeKey('1234', editedPass.passwordName),
+      passwordName: EncryptUtils.encodeKey('1234', editedPass.passwordName),
       password: password,
       passwordId: state.passwordId,
     );
@@ -101,18 +97,18 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         return securityLevel == 'base'
             ? passModel.password
             : securityLevel == 'medium'
-                ? PasswordsUtils.mediumDecrypt(
+                ? EncryptUtils.mediumDecrypt(
                     passModel.password,
                     firstKey,
                   )
-                : PasswordsUtils.hardDecrypt(
+                : EncryptUtils.hardDecrypt(
                     passModel.password,
                     firstKey,
                     secondKey,
                   );
       });
       passModel.passwordName = await Isolate.run(() {
-        return PasswordsUtils.decodeKey('1234', passModel.passwordName);
+        return EncryptUtils.decodeKey('1234', passModel.passwordName);
       });
     }
 
@@ -128,50 +124,50 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(passwordId: event.passwordId));
   }
 
-  FutureOr<void> _getSecurityLevel(
-      GetSecurityLevel event, Emitter<PasswordsState> emit) async {
-    String encryptedLevel = await localRepository.getLevel();
-    String level = '';
-    if (encryptedLevel.isEmpty) {
-      level = 'base';
-      add(SaveSecurityLevel(securityLevel: level));
-    }
-    if (encryptedLevel.isNotEmpty) {
-      level = PasswordsUtils.mediumDecrypt(
-          await localRepository.getLevel(), LocalRepository.levelKey);
-    }
+  // FutureOr<void> _getSecurityLevel(
+  //     GetSecurityLevel event, Emitter<PasswordsState> emit) async {
+  //   String encryptedLevel = await localRepository.getLevel();
+  //   String level = '';
+  //   if (encryptedLevel.isEmpty) {
+  //     level = 'base';
+  //     add(SaveSecurityLevel(securityLevel: level));
+  //   }
+  //   if (encryptedLevel.isNotEmpty) {
+  //     level = EncryptUtils.mediumDecrypt(
+  //         await localRepository.getLevel(), LocalRepository.levelKey);
+  //   }
 
-    emit(
-      state.copyWith(
-        securityLevel: level,
-      ),
-    );
-    add(const GetAllPass());
-  }
+  //   emit(
+  //     state.copyWith(
+  //       securityLevel: level,
+  //     ),
+  //   );
+  //   add(const GetAllPass());
+  // }
 
-  FutureOr<void> _saveSecurityLevel(
-      SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
-    final String level = PasswordsUtils.mediumEncrypt(
-      event.securityLevel,
-      LocalRepository.levelKey,
-    );
+  // FutureOr<void> _saveSecurityLevel(
+  //     SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
+  //   final String level = EncryptUtils.mediumEncrypt(
+  //     event.securityLevel,
+  //     LocalRepository.levelKey,
+  //   );
 
-    await localRepository.saveLevel(level);
-  }
+  //   await localRepository.saveLevel(level);
+  // }
 
-  FutureOr<void> _updateSecurityLevel(
-      UpdateSecurityLevel event, Emitter<PasswordsState> emit) async {
-    final String level = PasswordsUtils.mediumEncrypt(
-      event.securityLevel,
-      LocalRepository.levelKey,
-    );
-    emit(state.copyWith(
-      securityLevel: event.securityLevel,
-    ));
-    await localRepository.saveLevel(level);
+  // FutureOr<void> _updateSecurityLevel(
+  //     UpdateSecurityLevel event, Emitter<PasswordsState> emit) async {
+  //   final String level = EncryptUtils.mediumEncrypt(
+  //     event.securityLevel,
+  //     LocalRepository.levelKey,
+  //   );
+  //   emit(state.copyWith(
+  //     securityLevel: event.securityLevel,
+  //   ));
+  //   await localRepository.saveLevel(level);
 
-    add(const MigratePass());
-  }
+  //   add(const MigratePass());
+  // }
 
   FutureOr<void> _migratePass(
       MigratePass event, Emitter<PasswordsState> emit) async {
@@ -180,15 +176,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     String securityLevel = state.securityLevel;
     for (PassModel pass in state.passModel) {
       final PassModel newPass = PassModel(
-          passwordName: PasswordsUtils.encodeKey('1234', pass.passwordName),
+          passwordName: EncryptUtils.encodeKey('1234', pass.passwordName),
           password: await Isolate.run(
             () {
               return securityLevel == 'base'
                   ? pass.password
                   : securityLevel == 'medium'
-                      ? PasswordsUtils.mediumEncrypt(
+                      ? EncryptUtils.mediumEncrypt(
                           pass.password, firstSecurityKey)
-                      : PasswordsUtils.hardEncrypt(
+                      : EncryptUtils.hardEncrypt(
                           pass.password, firstSecurityKey, secondSecurityKey);
             },
           ),
