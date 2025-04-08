@@ -31,7 +31,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     int passwordId = Random().nextInt(100);
     String firstSecurityKey = LocalRepository.firstKey;
     String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = state.securityLevel;
+    String securityLevel = LocalRepository.securityLevel;
     final String password = await Isolate.run(
       () {
         return securityLevel == 'base'
@@ -55,7 +55,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
     String firstSecurityKey = LocalRepository.firstKey;
     String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = state.securityLevel;
+    String securityLevel = LocalRepository.securityLevel;
     String userPassword = event.password;
     final PassModel editedPass = state.passModel
         .firstWhere((element) => element.passwordId == state.passwordId);
@@ -90,7 +90,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
     String firstKey = LocalRepository.firstKey;
     String secondKey = LocalRepository.secondKey;
-    String securityLevel = state.securityLevel;
+    String securityLevel = LocalRepository.securityLevel;
 
     for (PassModel passModel in passModels) {
       passModel.password = await Isolate.run(() {
@@ -173,7 +173,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       MigratePass event, Emitter<PasswordsState> emit) async {
     String firstSecurityKey = LocalRepository.firstKey;
     String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = state.securityLevel;
+    String securityLevel = LocalRepository.securityLevel;
     for (PassModel pass in state.passModel) {
       final PassModel newPass = PassModel(
           passwordName: EncryptUtils.encodeKey('1234', pass.passwordName),
