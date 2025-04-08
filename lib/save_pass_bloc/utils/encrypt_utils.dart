@@ -1,6 +1,11 @@
-part of 'passwords_bloc.dart';
 
-class PasswordsUtils extends Equatable {
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+import 'package:crypton/crypton.dart';
+import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
+
+class EncryptUtils {
   static String decodeKey(String password, String key) {
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
@@ -79,7 +84,4 @@ class PasswordsUtils extends Equatable {
 
     return pass;
   }
-
-  @override
-  List<Object?> get props => [];
 }
