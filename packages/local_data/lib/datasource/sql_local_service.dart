@@ -44,6 +44,9 @@ class SqlLocalService {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
+    if (!File("${libDir.path}/keys.db").existsSync()) {
+      File("${libDir.path}/keys.db").createSync(recursive: true);
+    }
     final database = openDatabase(
       join(libDir.path, 'keys.db'),
       onCreate: (db, version) {
@@ -60,6 +63,9 @@ class SqlLocalService {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
+    if (!File("${libDir.path}/level.db").existsSync()) {
+      File("${libDir.path}/level.db").createSync(recursive: true);
+    }
     final database = openDatabase(
       join(libDir.path, 'level.db'),
       onCreate: (db, version) {
@@ -128,6 +134,9 @@ class SqlLocalService {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
+    if (!File("${libDir.path}/pass.db").existsSync()) {
+      File("${libDir.path}/pass.db").createSync(recursive: true);
+    }
     final database = openDatabase(
       join(libDir.path, 'pass.db'),
       onCreate: (db, version) {
