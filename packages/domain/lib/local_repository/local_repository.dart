@@ -8,6 +8,8 @@ abstract class LocalRepository {
   static late String firstKey;
   static late String secondKey;
 
+  static late String securityLevel;
+
 
   Future<bool> savePass(PassModel passModel);
   Future<List<PassModel>> getAllPass();
