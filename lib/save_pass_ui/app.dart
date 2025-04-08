@@ -74,9 +74,8 @@ class MyApp extends StatelessWidget {
               );
             }
             if (state.openStatus == OpenStatus.access) {
-              context
-                  .read<SecurityLevelBloc>()
-                  .add(const GetSecurityLevel());
+              context.read<SecurityLevelBloc>().add(const GetSecurityLevel());
+              await Future.delayed(const Duration(seconds: 1), () {});
               Navigator.of(context).pushNamed(
                 ScreenPaths.passListScreen,
                 arguments: {
