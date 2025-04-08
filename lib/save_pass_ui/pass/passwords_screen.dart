@@ -11,6 +11,23 @@ class PasswordsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PasswordsBloc, PasswordsState>(
       builder: (context, state) {
+        if (state.loadStatus == LoadStatus.loading) {
+          return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Расшифровываются пароли',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              CircularProgressIndicator(),
+            ],
+          );
+        }
+
         final List<PassModel> passModel = state.passModel;
         return ListView.builder(
           padding: const EdgeInsets.all(10.0),
