@@ -44,7 +44,7 @@
 ![Окно входа](assets/screenshots/login.png) 
 
 ### Окно паролей 
-![Выбор уровня шифрования](assets/screenshots/settings.png)  
+![Выбор уровня шифрования](assets/screenshots/pass.png)  
 
 ### Настройки безопасности  
 ![Выбор уровня шифрования](assets/screenshots/settings.png)  
