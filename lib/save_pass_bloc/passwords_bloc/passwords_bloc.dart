@@ -16,9 +16,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   PasswordsBloc({
     required this.localRepository,
   }) : super(const PasswordsState()) {
-    // on<SaveSecurityLevel>(_saveSecurityLevel);
-    // on<GetSecurityLevel>(_getSecurityLevel);
-    // on<UpdateSecurityLevel>(_updateSecurityLevel);
     on<SavePass>(_savePass);
     on<InitEditPass>(_initEditPass);
     on<EditPass>(_editPass);
@@ -123,51 +120,6 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       InitEditPass event, Emitter<PasswordsState> emit) {
     emit(state.copyWith(passwordId: event.passwordId));
   }
-
-  // FutureOr<void> _getSecurityLevel(
-  //     GetSecurityLevel event, Emitter<PasswordsState> emit) async {
-  //   String encryptedLevel = await localRepository.getLevel();
-  //   String level = '';
-  //   if (encryptedLevel.isEmpty) {
-  //     level = 'base';
-  //     add(SaveSecurityLevel(securityLevel: level));
-  //   }
-  //   if (encryptedLevel.isNotEmpty) {
-  //     level = EncryptUtils.mediumDecrypt(
-  //         await localRepository.getLevel(), LocalRepository.levelKey);
-  //   }
-
-  //   emit(
-  //     state.copyWith(
-  //       securityLevel: level,
-  //     ),
-  //   );
-  //   add(const GetAllPass());
-  // }
-
-  // FutureOr<void> _saveSecurityLevel(
-  //     SaveSecurityLevel event, Emitter<PasswordsState> emit) async {
-  //   final String level = EncryptUtils.mediumEncrypt(
-  //     event.securityLevel,
-  //     LocalRepository.levelKey,
-  //   );
-
-  //   await localRepository.saveLevel(level);
-  // }
-
-  // FutureOr<void> _updateSecurityLevel(
-  //     UpdateSecurityLevel event, Emitter<PasswordsState> emit) async {
-  //   final String level = EncryptUtils.mediumEncrypt(
-  //     event.securityLevel,
-  //     LocalRepository.levelKey,
-  //   );
-  //   emit(state.copyWith(
-  //     securityLevel: event.securityLevel,
-  //   ));
-  //   await localRepository.saveLevel(level);
-
-  //   add(const MigratePass());
-  // }
 
   FutureOr<void> _migratePass(
       MigratePass event, Emitter<PasswordsState> emit) async {
