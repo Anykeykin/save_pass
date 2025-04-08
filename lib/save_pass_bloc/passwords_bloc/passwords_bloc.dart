@@ -26,11 +26,13 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
-    String firstSecurityKey = LocalRepository.firstKey;
-    String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = LocalRepository.securityLevel;
+
     final String password = await encryptIsolatePassword(
-        securityLevel, event.password, firstSecurityKey, secondSecurityKey);
+      LocalRepository.securityLevel,
+      event.password,
+      LocalRepository.firstKey,
+      LocalRepository.secondKey,
+    );
 
     final PassModel newPass = PassModel(
       passwordName: EncryptUtils.encodeKey('1234', event.passwordName),
@@ -42,19 +44,19 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   }
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
-    String firstSecurityKey = LocalRepository.firstKey;
-    String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = LocalRepository.securityLevel;
-
     final String password = await encryptIsolatePassword(
-        securityLevel, event.password, firstSecurityKey, secondSecurityKey);
+        LocalRepository.securityLevel,
+        event.password,
+        LocalRepository.firstKey,
+        LocalRepository.secondKey);
 
-      int id = state.passwordId;
-      final PassModel editedPass =
-          state.passModel.where((element) => element.passwordId == id).first;
-      editedPass.password = password;
-      editedPass.passwordName = EncryptUtils.encodeKey('1234', editedPass.passwordName);
-      await localRepository.editPass(editedPass);
+    int id = state.passwordId;
+    final PassModel editedPass =
+        state.passModel.where((element) => element.passwordId == id).first;
+    editedPass.password = password;
+    editedPass.passwordName =
+        EncryptUtils.encodeKey('1234', editedPass.passwordName);
+    await localRepository.editPass(editedPass);
 
     add(const GetAllPass());
   }
@@ -70,28 +72,13 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     emit(state.copyWith(loadStatus: LoadStatus.loading));
     List<PassModel> passModels = await localRepository.getAllPass();
 
-    String firstKey = LocalRepository.firstKey;
-    String secondKey = LocalRepository.secondKey;
-    String securityLevel = LocalRepository.securityLevel;
-
     for (PassModel passModel in passModels) {
-      passModel.password = await Isolate.run(() {
-        return securityLevel == 'base'
-            ? passModel.password
-            : securityLevel == 'medium'
-                ? EncryptUtils.mediumDecrypt(
-                    passModel.password,
-                    firstKey,
-                  )
-                : EncryptUtils.hardDecrypt(
-                    passModel.password,
-                    firstKey,
-                    secondKey,
-                  );
-      });
-      passModel.passwordName = await Isolate.run(() {
-        return EncryptUtils.decodeKey('1234', passModel.passwordName);
-      });
+      await decryptIsolatePassword(
+        passModel,
+        LocalRepository.securityLevel,
+        LocalRepository.firstKey,
+        LocalRepository.secondKey,
+      );
     }
 
     emit(state.copyWith(
@@ -108,14 +95,15 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
 
   FutureOr<void> _migratePass(
       MigratePass event, Emitter<PasswordsState> emit) async {
-    String firstSecurityKey = LocalRepository.firstKey;
-    String secondSecurityKey = LocalRepository.secondKey;
-    String securityLevel = LocalRepository.securityLevel;
     for (PassModel pass in state.passModel) {
       final PassModel newPass = PassModel(
           passwordName: EncryptUtils.encodeKey('1234', pass.passwordName),
-          password: await encryptIsolatePassword(securityLevel, pass.password,
-              firstSecurityKey, secondSecurityKey),
+          password: await encryptIsolatePassword(
+            LocalRepository.securityLevel,
+            pass.password,
+            LocalRepository.firstKey,
+            LocalRepository.secondKey,
+          ),
           passwordId: pass.passwordId);
 
       await localRepository.editPass(newPass);
@@ -138,5 +126,30 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
                     password, firstSecurityKey, secondSecurityKey);
       },
     );
+  }
+
+  Future<void> decryptIsolatePassword(
+    PassModel passModel,
+    String securityLevel,
+    String firstKey,
+    String secondKey,
+  ) async {
+    passModel.password = await Isolate.run(() {
+      return securityLevel == 'base'
+          ? passModel.password
+          : securityLevel == 'medium'
+              ? EncryptUtils.mediumDecrypt(
+                  passModel.password,
+                  firstKey,
+                )
+              : EncryptUtils.hardDecrypt(
+                  passModel.password,
+                  firstKey,
+                  secondKey,
+                );
+    });
+    passModel.passwordName = await Isolate.run(() {
+      return EncryptUtils.decodeKey('1234', passModel.passwordName);
+    });
   }
 }
