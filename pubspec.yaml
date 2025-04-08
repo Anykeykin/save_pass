@@ -25,6 +25,7 @@ dependencies:
     path: packages/local_data
   remote_data:
     path: packages/remote_data
+  smart_encrypt: ^1.0.8
     
 dev_dependencies:
   flutter_test:

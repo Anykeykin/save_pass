@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  args:
+    dependency: transitive
+    description:
+      name: args
+      sha256: d0481093c50b1da8910eb0bb301626d4d8eb7284aa739614d2b394ee09e3ea04
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.7.0"
   asn1lib:
     dependency: transitive
     description:
@@ -144,6 +152,14 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  encrypt:
+    dependency: transitive
+    description:
+      name: encrypt
+      sha256: "62d9aa4670cc2a8798bab89b39fc71b6dfbacf615de6cf5001fb39f7e4a996a2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.3"
   encrypt_decrypt_plus:
     dependency: "direct main"
     description:
@@ -586,6 +602,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  smart_encrypt:
+    dependency: "direct main"
+    description:
+      name: smart_encrypt
+      sha256: b0c80924dc668c63b94a3944f098dd05a38d3e45b7cec992fd3b90c0bda05c09
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.8"
   source_span:
     dependency: transitive
     description:
