@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
-import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
 import 'package:domain/models/security_level.dart';
-import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 import 'package:equatable/equatable.dart';
 import 'package:domain/local_repository/local_repository.dart';
+import 'package:smart_encrypt/smart_encrypt.dart';
 
 part 'authorization_event.dart';
 part 'authorization_state.dart';
@@ -25,7 +23,7 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       String firstKey = decodeKey(event.password, state.firstKey);
       String secondKey = decodeKey(event.password, state.secondKey);
       String levelKey = decodeKey(event.password, state.levelKey);
-      
+
       LocalRepository.levelKey = levelKey;
       LocalRepository.secondKey = secondKey;
       LocalRepository.firstKey = firstKey;
@@ -53,16 +51,17 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     String levelKey = RSAKeypair.fromRandom().privateKey.toString();
 
     String encFirstKey = encodeKey(event.password, firstKey);
-    await localRepository
-        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'first_key') , key: encFirstKey));
+    await localRepository.saveSecurityKey(SecurityKey(
+        keyName: encodeKey('1234567890123456', 'first_key'), key: encFirstKey));
 
     String encSecondKey = encodeKey(event.password, secondKey);
-    await localRepository
-        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'second_key'), key: encSecondKey));
+    await localRepository.saveSecurityKey(SecurityKey(
+        keyName: encodeKey('1234567890123456', 'second_key'),
+        key: encSecondKey));
 
     String encLevelKey = encodeKey(event.password, levelKey);
-    await localRepository
-        .saveSecurityKey(SecurityKey(keyName: encodeKey('1234', 'level_key'), key: encLevelKey));
+    await localRepository.saveSecurityKey(SecurityKey(
+        keyName: encodeKey('1234567890123456', 'level_key'), key: encLevelKey));
 
     emit(
       state.copyWith(
@@ -85,7 +84,7 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       String secondKey = '';
       String levelKey = '';
       for (SecurityKey key in keys) {
-        String keyName = decodeKey('1234', key.keyName);
+        String keyName = decodeKey('1234567890123456', key.keyName);
         if (keyName == 'first_key') firstKey = key.key;
         if (keyName == 'second_key') secondKey = key.key;
         if (keyName == 'level_key') levelKey = key.key;
@@ -103,17 +102,15 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
 
   String decodeKey(String password, String key) {
     var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
+    var iv = utf8.encode(password);
 
-    Cipher cipher = Cipher();
-    return cipher.xorDecode(key, secretKey: base64Encode(digest.bytes));
+    return SmartEncrypt.decrypt(key, bytes, iv);
   }
 
   String encodeKey(String password, String key) {
     var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
-
-    Cipher cipher = Cipher();
-    return cipher.xorEncode(key, secretKey: base64Encode(digest.bytes));
+    var iv = utf8.encode(password);
+    
+    return SmartEncrypt.encrypt(key, bytes, iv);
   }
 }
