@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:save_pass/save_pass_bloc/authorization_bloc/authorization_bloc.dart';
 import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
+import 'package:save_pass/save_pass_bloc/security_level_bloc/security_level_bloc.dart';
 import 'package:save_pass/save_pass_ui/create_pass/create_pass_screen.dart';
 import 'package:save_pass/save_pass_ui/edit_pass/edit_pass_screen.dart';
 import 'package:save_pass/save_pass_ui/authorization/login_screen.dart';
@@ -81,11 +82,14 @@ SwipeablePageRoute<void> passListScreen(
       final Map<String, dynamic>? routeArguments =
           arguments as Map<String, dynamic>?;
       final PasswordsBloc passwordsBloc = routeArguments?['passwords_bloc'];
-
+      final SecurityLevelBloc securityLevelBloc = routeArguments?['security_level_bloc'];
       return MultiBlocProvider(
         providers: [
           BlocProvider.value(
-            value: passwordsBloc..add(const GetSecurityLevel()),
+            value: passwordsBloc..add(const GetAllPass()),
+          ),
+          BlocProvider.value(
+            value: securityLevelBloc,
           ),
         ],
         child: const MainScreen(),
