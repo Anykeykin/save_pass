@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
@@ -27,7 +26,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   FutureOr<void> _savePass(SavePass event, Emitter<PasswordsState> emit) async {
     int passwordId = Random().nextInt(100);
 
-    final String password = await encryptIsolatePassword(
+    final String password = await EncryptUtils.encryptIsolatePassword(
       LocalRepository.securityLevel,
       event.password,
       LocalRepository.firstKey,
@@ -44,7 +43,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
   }
 
   FutureOr<void> _editPass(EditPass event, Emitter<PasswordsState> emit) async {
-    final String password = await encryptIsolatePassword(
+    final String password = await EncryptUtils.encryptIsolatePassword(
         LocalRepository.securityLevel,
         event.password,
         LocalRepository.firstKey,
@@ -73,7 +72,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     List<PassModel> passModels = await localRepository.getAllPass();
 
     for (PassModel passModel in passModels) {
-      await decryptIsolatePassword(
+      await EncryptUtils.decryptIsolatePassword(
         passModel,
         LocalRepository.securityLevel,
         LocalRepository.firstKey,
@@ -98,7 +97,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     for (PassModel pass in state.passModel) {
       final PassModel newPass = PassModel(
           passwordName: EncryptUtils.encodeKey('1234', pass.passwordName),
-          password: await encryptIsolatePassword(
+          password: await EncryptUtils.encryptIsolatePassword(
             LocalRepository.securityLevel,
             pass.password,
             LocalRepository.firstKey,
@@ -110,46 +109,5 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     }
   }
 
-  Future<String> encryptIsolatePassword(
-    String securityLevel,
-    String password,
-    String firstSecurityKey,
-    String secondSecurityKey,
-  ) async {
-    return await Isolate.run(
-      () {
-        return securityLevel == 'base'
-            ? password
-            : securityLevel == 'medium'
-                ? EncryptUtils.mediumEncrypt(password, firstSecurityKey)
-                : EncryptUtils.hardEncrypt(
-                    password, firstSecurityKey, secondSecurityKey);
-      },
-    );
-  }
-
-  Future<void> decryptIsolatePassword(
-    PassModel passModel,
-    String securityLevel,
-    String firstKey,
-    String secondKey,
-  ) async {
-    passModel.password = await Isolate.run(() {
-      return securityLevel == 'base'
-          ? passModel.password
-          : securityLevel == 'medium'
-              ? EncryptUtils.mediumDecrypt(
-                  passModel.password,
-                  firstKey,
-                )
-              : EncryptUtils.hardDecrypt(
-                  passModel.password,
-                  firstKey,
-                  secondKey,
-                );
-    });
-    passModel.passwordName = await Isolate.run(() {
-      return EncryptUtils.decodeKey('1234', passModel.passwordName);
-    });
-  }
+  
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
+import 'package:domain/models/pass_model.dart';
 import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
 
 class EncryptUtils {
@@ -87,5 +89,48 @@ class EncryptUtils {
     String pass = firstKeyPair.privateKey.decrypt(encryptedPass);
 
     return pass;
+  }
+
+  static Future<String> encryptIsolatePassword(
+    String securityLevel,
+    String password,
+    String firstSecurityKey,
+    String secondSecurityKey,
+  ) async {
+    return await Isolate.run(
+      () {
+        return securityLevel == 'base'
+            ? password
+            : securityLevel == 'medium'
+                ? EncryptUtils.mediumEncrypt(password, firstSecurityKey)
+                : EncryptUtils.hardEncrypt(
+                    password, firstSecurityKey, secondSecurityKey);
+      },
+    );
+  }
+
+  static Future<void> decryptIsolatePassword(
+    PassModel passModel,
+    String securityLevel,
+    String firstKey,
+    String secondKey,
+  ) async {
+    passModel.password = await Isolate.run(() {
+      return securityLevel == 'base'
+          ? passModel.password
+          : securityLevel == 'medium'
+              ? EncryptUtils.mediumDecrypt(
+                  passModel.password,
+                  firstKey,
+                )
+              : EncryptUtils.hardDecrypt(
+                  passModel.password,
+                  firstKey,
+                  secondKey,
+                );
+    });
+    passModel.passwordName = await Isolate.run(() {
+      return EncryptUtils.decodeKey('1234', passModel.passwordName);
+    });
   }
 }
