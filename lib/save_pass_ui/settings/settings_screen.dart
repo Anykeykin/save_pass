@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:save_pass/save_pass_bloc/passwords_bloc/passwords_bloc.dart';
 import 'package:save_pass/save_pass_bloc/security_level_bloc/security_level_bloc.dart';
 
 class ProtectionSettingsScreen extends StatelessWidget {
@@ -80,10 +81,14 @@ class ProtectionSettingsScreen extends StatelessWidget {
   ValueChanged<String?> _handleLevelChange(BuildContext context) {
     final primaryColor = const Color(0xFF009688);
 
-    return (level) {
+    return (level) async {
       if (level != null) {
         context.read<SecurityLevelBloc>().add(
               SaveSecurityLevel(securityLevel: level),
+            );
+        await Future.delayed(const Duration(seconds: 1), () {});
+        context.read<PasswordsBloc>().add(
+              const MigratePass(),
             );
 
         ScaffoldMessenger.of(context).showSnackBar(
