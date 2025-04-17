@@ -12,6 +12,7 @@ class SqlLocalService {
   late Database _sqlDatabase;
   late Database _keyDatabase;
   late Database _levelDatabase;
+  late Database _authDatabase;
 
   SqlLocalService();
 
@@ -22,34 +23,45 @@ class SqlLocalService {
         0;
   }
 
-  getLevel() async {
-    final List<Map<String, Object?>> securityMaps =
-        await _levelDatabase.query('level');
-    String level = '';
+  Future<String?> getLevel() async {
     try {
-      level = securityMaps[0]['level'] as String;
+      final List<Map<String, Object?>> securityMaps = await _levelDatabase.query('level');
+      if (securityMaps.isEmpty) return null;
+      return securityMaps[0]['level'] as String;
     } catch (e) {
-      print(e);
+      // TODO: Добавить логирование
+      return null;
     }
-    return level;
   }
 
-  getKeys() async {
-    final List<Map<String, Object?>> keys = await _keyDatabase.query('keys');
+  Future<List<SecurityKey>> getKeys() async {
+    try {
+      final List<Map<String, Object?>> keys = await _keyDatabase.query('keys');
+      return [for (final key in keys) SecurityKey.fromMap(key)];
+    } catch (e) {
+      // TODO: Добавить логирование
+      return [];
+    }
+  }
 
-    return [
-      for (final key in keys) SecurityKey.fromMap(key),
-    ];
+  Future<Directory> _getDatabaseDirectory() async {
+    return Platform.isAndroid
+        ? await getApplicationDocumentsDirectory()
+        : await getLibraryDirectory();
+  }
+
+  Future<void> _ensureDatabaseFile(String dbName) async {
+    final libDir = await _getDatabaseDirectory();
+    final dbFile = File("${libDir.path}/$dbName");
+    if (!dbFile.existsSync()) {
+      dbFile.createSync(recursive: true);
+    }
   }
 
   Future<void> openKeySqlDatabase() async {
-    final Directory libDir = Platform.isAndroid
-        ? await getApplicationDocumentsDirectory()
-        : await getLibraryDirectory();
-    if (!File("${libDir.path}/keys.db").existsSync()) {
-      File("${libDir.path}/keys.db").createSync(recursive: true);
-    }
-
+    await _ensureDatabaseFile('keys.db');
+    final libDir = await _getDatabaseDirectory();
+    
     _keyDatabase = await openDatabase(
       join(libDir.path, 'keys.db'),
       onCreate: (db, version) {
@@ -62,12 +74,9 @@ class SqlLocalService {
   }
 
   Future<void> openLevelSqlDatabase() async {
-    final Directory libDir = Platform.isAndroid
-        ? await getApplicationDocumentsDirectory()
-        : await getLibraryDirectory();
-    if (!File("${libDir.path}/level.db").existsSync()) {
-      File("${libDir.path}/level.db").createSync(recursive: true);
-    }
+    await _ensureDatabaseFile('level.db');
+    final libDir = await _getDatabaseDirectory();
+    
     _levelDatabase = await openDatabase(
       join(libDir.path, 'level.db'),
       onCreate: (db, version) {
@@ -123,12 +132,9 @@ class SqlLocalService {
   }
 
   Future<void> openSqlDatabase() async {
-    final Directory libDir = Platform.isAndroid
-        ? await getApplicationDocumentsDirectory()
-        : await getLibraryDirectory();
-    if (!File("${libDir.path}/pass.db").existsSync()) {
-      File("${libDir.path}/pass.db").createSync(recursive: true);
-    }
+    await _ensureDatabaseFile('pass.db');
+    final libDir = await _getDatabaseDirectory();
+    
     _sqlDatabase = await openDatabase(
       join(libDir.path, 'pass.db'),
       onCreate: (db, version) {
@@ -140,11 +146,11 @@ class SqlLocalService {
     );
   }
 
-  static openAuthSqlDatabase() async {
-    final Directory libDir = Platform.isAndroid
-        ? await getApplicationDocumentsDirectory()
-        : await getLibraryDirectory();
-    final database = openDatabase(
+  Future<void> openAuthSqlDatabase() async {
+    await _ensureDatabaseFile('auth.db');
+    final libDir = await _getDatabaseDirectory();
+    
+    _authDatabase = await openDatabase(
       join(libDir.path, 'auth.db'),
       onCreate: (db, version) {
         return db.execute(
@@ -153,28 +159,31 @@ class SqlLocalService {
       },
       version: 1,
     );
-    return database;
   }
 
-  static Future<bool> saveAuthData(AppUser appUser) async {
-    final db = await openAuthSqlDatabase();
-
-    return await db.insert(
-          'auth',
-          appUser.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        ) !=
-        0;
+  Future<bool> saveAuthData(AppUser appUser) async {
+    try {
+      return await _authDatabase.insert(
+        'auth',
+        appUser.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      ) != 0;
+    } catch (e) {
+      // TODO: Добавить логирование
+      return false;
+    }
   }
 
-  static Future<bool> removeAuthData(AppUser appUser) async {
-    final db = await openAuthSqlDatabase();
-
-    return await db.delete(
-          'auth',
-          where: 'id = ?',
-          whereArgs: [appUser.uid],
-        ) !=
-        0;
+  Future<bool> removeAuthData(AppUser appUser) async {
+    try {
+      return await _authDatabase.delete(
+        'auth',
+        where: 'id = ?',
+        whereArgs: [appUser.uid],
+      ) != 0;
+    } catch (e) {
+      // TODO: Добавить логирование
+      return false;
+    }
   }
 }
