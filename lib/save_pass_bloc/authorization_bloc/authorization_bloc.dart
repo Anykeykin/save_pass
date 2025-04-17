@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:crypton/crypton.dart';
 import 'package:domain/models/security_level.dart';
 import 'package:equatable/equatable.dart';
 import 'package:domain/local_repository/local_repository.dart';
-import 'package:smart_encrypt/smart_encrypt.dart';
+import 'package:save_pass/save_pass_bloc/utils/encrypt_utils.dart';
 
 part 'authorization_event.dart';
 part 'authorization_state.dart';
@@ -24,9 +23,9 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       while (password.length != 16) {
         password = password + password[0];
       }
-      String firstKey = decodeKey(password, state.firstKey);
-      String secondKey = decodeKey(password, state.secondKey);
-      String levelKey = decodeKey(password, state.levelKey);
+      String firstKey = EncryptUtils.decodeKey(password, state.firstKey);
+      String secondKey = EncryptUtils.decodeKey(password, state.secondKey);
+      String levelKey = EncryptUtils.decodeKey(password, state.levelKey);
 
       LocalRepository.levelKey = levelKey;
       LocalRepository.secondKey = secondKey;
@@ -57,18 +56,18 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
     while (password.length != 16) {
       password = password + password[0];
     }
-    String encFirstKey = encodeKey(password, firstKey);
+    String encFirstKey = EncryptUtils.encodeKey(password, firstKey);
     await localRepository.saveSecurityKey(SecurityKey(
-        keyName: encodeKey('1234567890123456', 'first_key'), key: encFirstKey));
+        keyName: EncryptUtils.encodeKey('1234567890123456', 'first_key'), key: encFirstKey));
 
-    String encSecondKey = encodeKey(password, secondKey);
+    String encSecondKey = EncryptUtils.encodeKey(password, secondKey);
     await localRepository.saveSecurityKey(SecurityKey(
-        keyName: encodeKey('1234567890123456', 'second_key'),
+        keyName: EncryptUtils.encodeKey('1234567890123456', 'second_key'),
         key: encSecondKey));
 
-    String encLevelKey = encodeKey(password, levelKey);
+    String encLevelKey = EncryptUtils.encodeKey(password, levelKey);
     await localRepository.saveSecurityKey(SecurityKey(
-        keyName: encodeKey('1234567890123456', 'level_key'), key: encLevelKey));
+        keyName: EncryptUtils.encodeKey('1234567890123456', 'level_key'), key: encLevelKey));
 
     emit(
       state.copyWith(
@@ -91,7 +90,7 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
       String secondKey = '';
       String levelKey = '';
       for (SecurityKey key in keys) {
-        String keyName = decodeKey('1234567890123456', key.keyName);
+        String keyName = EncryptUtils.decodeKey('1234567890123456', key.keyName);
         if (keyName == 'first_key') firstKey = key.key;
         if (keyName == 'second_key') secondKey = key.key;
         if (keyName == 'level_key') levelKey = key.key;
@@ -105,19 +104,5 @@ class AuthorizationBloc extends Bloc<AuthorizationEvent, AuthorizationState> {
         ),
       );
     }
-  }
-
-  String decodeKey(String password, String key) {
-    var bytes = utf8.encode(password);
-    var iv = utf8.encode(password);
-
-    return SmartEncrypt.decrypt(key, bytes, iv);
-  }
-
-  String encodeKey(String password, String key) {
-    var bytes = utf8.encode(password);
-    var iv = utf8.encode(password);
-
-    return SmartEncrypt.encrypt(key, bytes, iv);
   }
 }
