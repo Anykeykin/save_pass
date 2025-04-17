@@ -34,7 +34,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
     );
 
     final PassModel newPass = PassModel(
-      passwordName: EncryptUtils.encodeKey('1234', event.passwordName),
+      passwordName: EncryptUtils.encodeKey('1234567890123456', event.passwordName),
       password: password,
       passwordId: passwordId,
     );
@@ -54,7 +54,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
         state.passModel.where((element) => element.passwordId == id).first;
     editedPass.password = password;
     editedPass.passwordName =
-        EncryptUtils.encodeKey('1234', editedPass.passwordName);
+        EncryptUtils.encodeKey('1234567890123456', editedPass.passwordName);
     await localRepository.editPass(editedPass);
 
     add(const GetAllPass());
@@ -96,7 +96,7 @@ class PasswordsBloc extends Bloc<PasswordsEvent, PasswordsState> {
       MigratePass event, Emitter<PasswordsState> emit) async {
     for (PassModel pass in state.passModel) {
       final PassModel newPass = PassModel(
-          passwordName: EncryptUtils.encodeKey('1234', pass.passwordName),
+          passwordName: EncryptUtils.encodeKey('1234567890123456', pass.passwordName),
           password: await EncryptUtils.encryptIsolatePassword(
             LocalRepository.securityLevel,
             pass.password,
