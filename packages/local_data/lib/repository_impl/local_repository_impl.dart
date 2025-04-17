@@ -44,7 +44,7 @@ class LocalRepositoryImpl implements LocalRepository {
   }
 
   @override
-  Future<String> getLevel() async {
+  Future<String?> getLevel() async {
     return await _sqlLocalService.getLevel();
   }
 
