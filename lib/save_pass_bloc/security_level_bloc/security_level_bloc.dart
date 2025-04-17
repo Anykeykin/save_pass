@@ -18,15 +18,15 @@ class SecurityLevelBloc extends Bloc<SecurityLevelEvent, SecurityLevelState> {
 
   FutureOr<void> _getSecurityLevel(
       GetSecurityLevel event, Emitter<SecurityLevelState> emit) async {
-    String encryptedLevel = await localRepository.getLevel();
+    String? encryptedLevel = await localRepository.getLevel();
     String level = '';
-    if (encryptedLevel.isEmpty) {
+    if (encryptedLevel == null) {
       level = 'base';
       add(SaveSecurityLevel(securityLevel: level));
     }
-    if (encryptedLevel.isNotEmpty) {
+    if (encryptedLevel != null) {
       level = EncryptUtils.mediumDecrypt(
-          await localRepository.getLevel(), LocalRepository.levelKey);
+          encryptedLevel, LocalRepository.levelKey);
 
       LocalRepository.securityLevel = level;
       
