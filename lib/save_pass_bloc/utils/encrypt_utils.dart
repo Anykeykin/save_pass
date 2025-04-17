@@ -1,26 +1,23 @@
 import 'dart:convert';
 import 'dart:isolate';
 
-import 'package:crypto/crypto.dart';
 import 'package:crypton/crypton.dart';
 import 'package:domain/models/pass_model.dart';
-import 'package:encrypt_decrypt_plus/cipher/cipher.dart';
+import 'package:smart_encrypt/smart_encrypt.dart';
 
 class EncryptUtils {
   static String decodeKey(String password, String key) {
     var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
+    var iv = utf8.encode(password);
 
-    Cipher cipher = Cipher();
-    return cipher.xorDecode(key, secretKey: base64Encode(digest.bytes));
+    return SmartEncrypt.decrypt(key, bytes, iv);
   }
 
   static String encodeKey(String password, String key) {
     var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
+    var iv = utf8.encode(password);
 
-    Cipher cipher = Cipher();
-    return cipher.xorEncode(key, secretKey: base64Encode(digest.bytes));
+    return SmartEncrypt.encrypt(key, bytes, iv);
   }
 
   static String mediumEncrypt(String password, String firstSecurityKey) {
@@ -130,7 +127,7 @@ class EncryptUtils {
                 );
     });
     passModel.passwordName = await Isolate.run(() {
-      return EncryptUtils.decodeKey('1234', passModel.passwordName);
+      return EncryptUtils.decodeKey('1234567890123456', passModel.passwordName);
     });
   }
 }
