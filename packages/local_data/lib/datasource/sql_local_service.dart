@@ -9,18 +9,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SqlLocalService {
-  static Future<bool> saveLevel(String securityLevel) async {
-    final Database db = await openLevelSqlDatabase();
+  late Database _sqlDatabase;
+  late Database _keyDatabase;
+  late Database _levelDatabase;
 
-    return await db.insert('level', {'level_id': 0, 'level': securityLevel},
+  SqlLocalService();
+
+  Future<bool> saveLevel(String securityLevel) async {
+    return await _levelDatabase.insert(
+            'level', {'level_id': 0, 'level': securityLevel},
             conflictAlgorithm: ConflictAlgorithm.replace) !=
         0;
   }
 
-  static getLevel() async {
-    final Database db = await openLevelSqlDatabase();
-
-    final List<Map<String, Object?>> securityMaps = await db.query('level');
+  getLevel() async {
+    final List<Map<String, Object?>> securityMaps =
+        await _levelDatabase.query('level');
     String level = '';
     try {
       level = securityMaps[0]['level'] as String;
@@ -30,24 +34,23 @@ class SqlLocalService {
     return level;
   }
 
-  static getKeys() async {
-    final Database db = await openKeySqlDatabase();
-
-    final List<Map<String, Object?>> keys = await db.query('keys');
+  getKeys() async {
+    final List<Map<String, Object?>> keys = await _keyDatabase.query('keys');
 
     return [
       for (final key in keys) SecurityKey.fromMap(key),
     ];
   }
 
-  static openKeySqlDatabase() async {
+  Future<void> openKeySqlDatabase() async {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
     if (!File("${libDir.path}/keys.db").existsSync()) {
       File("${libDir.path}/keys.db").createSync(recursive: true);
     }
-    final database = openDatabase(
+
+    _keyDatabase = await openDatabase(
       join(libDir.path, 'keys.db'),
       onCreate: (db, version) {
         return db.execute(
@@ -56,17 +59,16 @@ class SqlLocalService {
       },
       version: 2,
     );
-    return database;
   }
 
-  static openLevelSqlDatabase() async {
+  Future<void> openLevelSqlDatabase() async {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
     if (!File("${libDir.path}/level.db").existsSync()) {
       File("${libDir.path}/level.db").createSync(recursive: true);
     }
-    final database = openDatabase(
+    _levelDatabase = await openDatabase(
       join(libDir.path, 'level.db'),
       onCreate: (db, version) {
         return db.execute(
@@ -75,21 +77,16 @@ class SqlLocalService {
       },
       version: 2,
     );
-    return database;
   }
 
-  static Future<bool> saveKey(SecurityKey securitykey) async {
-    final db = await openKeySqlDatabase();
-
-    return await db.insert('keys', securitykey.toMap(),
+  Future<bool> saveKey(SecurityKey securitykey) async {
+    return await _keyDatabase.insert('keys', securitykey.toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace) !=
         0;
   }
 
-  static Future<bool> deletePass(int passwordId) async {
-    final db = await openSqlDatabase();
-
-    return await db.delete(
+  Future<bool> deletePass(int passwordId) async {
+    return await _sqlDatabase.delete(
           'pass',
           where: 'password_id = ?',
           whereArgs: [passwordId],
@@ -97,10 +94,8 @@ class SqlLocalService {
         0;
   }
 
-  static Future<bool> editPass(PassModel passModel) async {
-    final db = await openSqlDatabase();
-
-    return await db.update(
+  Future<bool> editPass(PassModel passModel) async {
+    return await _sqlDatabase.update(
           'pass',
           passModel.toMap(),
           where: 'password_id = ?',
@@ -109,10 +104,8 @@ class SqlLocalService {
         0;
   }
 
-  static Future<bool> savePass(PassModel passModel) async {
-    final db = await openSqlDatabase();
-
-    return await db.insert(
+  Future<bool> savePass(PassModel passModel) async {
+    return await _sqlDatabase.insert(
           'pass',
           passModel.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
@@ -120,24 +113,23 @@ class SqlLocalService {
         0;
   }
 
-  static Future<List<PassModel>> getAllPass() async {
-    final Database db = await openSqlDatabase();
-
-    final List<Map<String, Object?>> passMaps = await db.query('pass');
+  Future<List<PassModel>> getAllPass() async {
+    final List<Map<String, Object?>> passMaps =
+        await _sqlDatabase.query('pass');
 
     return [
       for (final passMap in passMaps) PassModel.fromMap(passMap),
     ];
   }
 
-  static openSqlDatabase() async {
+  Future<void> openSqlDatabase() async {
     final Directory libDir = Platform.isAndroid
         ? await getApplicationDocumentsDirectory()
         : await getLibraryDirectory();
     if (!File("${libDir.path}/pass.db").existsSync()) {
       File("${libDir.path}/pass.db").createSync(recursive: true);
     }
-    final database = openDatabase(
+    _sqlDatabase = await openDatabase(
       join(libDir.path, 'pass.db'),
       onCreate: (db, version) {
         return db.execute(
@@ -146,7 +138,6 @@ class SqlLocalService {
       },
       version: 1,
     );
-    return database;
   }
 
   static openAuthSqlDatabase() async {
