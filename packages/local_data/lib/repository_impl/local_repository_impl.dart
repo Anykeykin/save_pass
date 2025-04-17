@@ -50,14 +50,10 @@ class LocalRepositoryImpl implements LocalRepository {
 
   @override
   Future<void> initDatabase() async {
-    try {
-      SqlLocalService.openKeySqlDatabase();
-    } catch (e) {}
-    try {
-      SqlLocalService.openSqlDatabase();
-    } catch (e) {}
-    try {
-      SqlLocalService.openLevelSqlDatabase();
-    } catch (e) {}
+    await Future.wait([
+      _sqlLocalService.openKeySqlDatabase(),
+      _sqlLocalService.openSqlDatabase(),
+      _sqlLocalService.openLevelSqlDatabase(),
+    ]);
   }
 }
